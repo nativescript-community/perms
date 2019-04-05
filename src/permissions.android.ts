@@ -148,19 +148,21 @@ function requestPermission(permission: string): Promise<PermissionStatus> {
 
     return new Promise((resolve, reject) => {
         try {
-            activity.requestPermissions([permission], mRequestCode);
+            const requestCode = mRequestCode++;
+            activity.requestPermissions([permission], requestCode);
             application.android.on(application.AndroidApplication.activityRequestPermissionsEvent, (args: application.AndroidActivityRequestPermissionsEventData) => {
-                if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    resolve(PermissionStatus.GRANTED);
-                } else {
-                    if (activity.shouldShowRequestPermissionRationale(permission)) {
-                        resolve(PermissionStatus.DENIED);
+                if (args.requestCode === requestCode) {
+                    if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        resolve(PermissionStatus.GRANTED);
                     } else {
-                        resolve(PermissionStatus.NEVER_ASK_AGAIN);
+                        if (activity.shouldShowRequestPermissionRationale(permission)) {
+                            resolve(PermissionStatus.DENIED);
+                        } else {
+                            resolve(PermissionStatus.NEVER_ASK_AGAIN);
+                        }
                     }
                 }
             });
-            mRequestCode++;
         } catch (e) {
             reject(e);
         }
@@ -197,23 +199,27 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
     const activity: android.app.Activity = application.android.foregroundActivity || application.android.startActivity;
     return new Promise((resolve, reject) => {
         try {
-            activity.requestPermissions(permissionsToCheck, mRequestCode);
+            const requestCode = mRequestCode++;
+            activity.requestPermissions(permissionsToCheck, requestCode);
             application.android.on(application.AndroidApplication.activityRequestPermissionsEvent, (args: application.AndroidActivityRequestPermissionsEventData) => {
-                const results = args.grantResults;
-                console.log('did requestMultiplePermissions', permissionsToCheck, results, results.length);
-                for (let j = 0; j < permissionsToCheck.length; j++) {
-                    const permission = permissionsToCheck[j];
-                    if (results.length > j && results[j] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                        grantedPermissions[permission] = PermissionStatus.GRANTED;
-                    } else {
-                        if (activity.shouldShowRequestPermissionRationale(permission)) {
-                            grantedPermissions[permission] = PermissionStatus.DENIED;
+                if (args.requestCode === requestCode) {
+                    const results = args.grantResults;
+                    console.log('did requestMultiplePermissions', permissionsToCheck, results, results.length);
+                    for (let j = 0; j < permissionsToCheck.length; j++) {
+                        const permission = permissionsToCheck[j];
+                        if (results.length > j && results[j] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                            grantedPermissions[permission] = PermissionStatus.GRANTED;
                         } else {
-                            grantedPermissions[permission] = PermissionStatus.NEVER_ASK_AGAIN;
+                            if (activity.shouldShowRequestPermissionRationale(permission)) {
+                                grantedPermissions[permission] = PermissionStatus.DENIED;
+                            } else {
+                                grantedPermissions[permission] = PermissionStatus.NEVER_ASK_AGAIN;
+                            }
                         }
                     }
+                    resolve(grantedPermissions);
                 }
-                resolve(grantedPermissions);
+
                 // if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 //     resolve(PermissionStatus.GRANTED);
                 // } else {
@@ -224,7 +230,6 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
                 //     }
                 // }
             });
-            mRequestCode++;
         } catch (e) {
             reject(e);
         }
