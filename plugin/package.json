@@ -1,0 +1,29 @@
+{
+    "name": "nativescript-perms",
+    "version": "1.0.0",
+    "description": "Nativescript Permissions plugin.",
+    "main": "./permissions",
+    "typings": "./permissions.d.ts",
+    "nativescript": {
+        "platforms": {
+            "android": "3.0.0",
+            "ios": "3.0.0"
+        }
+    },
+    "keywords": [
+        "NativeScript",
+        "JavaScript",
+        "Android",
+        "iOS"
+    ],
+    "author": {
+        "name": "Martin Guillon",
+        "email": "martin@akylas.fr"
+    },
+    "bugs": {
+        "url": "https://github.com/Akylas/nativescript-perms/issues"
+    },
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/Akylas/nativescript-perms",
+    "readmeFilename": "README.md"
+}
