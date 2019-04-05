@@ -2,7 +2,7 @@
     "name": "nativescript-perms",
     "version": "1.0.0",
     "scripts": {
-        "tsc": "tsc -skipLibCheck && cp src/permissions.d.ts plugin",
+        "tsc": "tsc -skipLibCheck && cp src/permissions.d.ts plugin && cp README.md plugin",
         "build.wrappers": "npm i && npm run tsc",
         "build.android": "bash src-native/android/build.sh",
         "build.ios": "bash src-native/ios/build.sh",
@@ -22,12 +22,12 @@
         "npm-watch": "^0.6.0",
         "prompt": "^1.0.0",
         "rimraf": "^2.6.3",
-        "tns-core-modules": "5.2.1",
-        "tns-platform-declarations": "^5.2.1",
-        "tslint": "^5.13.0",
+        "tns-core-modules": "5.3.1",
+        "tns-platform-declarations": "^5.3.1",
+        "tslint": "^5.15.0",
         "tslint-config-prettier": "^1.18.0",
         "tslint-config-standard": "^8.0.1",
-        "typescript": "~3.2.4"
+        "typescript": "~3.4.1"
     },
     "repository": {
         "type": "git",
