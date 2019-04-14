@@ -2,9 +2,8 @@ import { CheckOptions, RequestOptions, Status } from './permissions';
 
 export namespace PermissionsIOS {
     namespace NSPLocation {
-        export function getStatusForType(type?: string): Status {
-            const status2 = CLLocationManager.authorizationStatus();
-            switch (status2) {
+        function getStatusFromCLAuthorizationStatus(status: CLAuthorizationStatus, type?: string): Status {
+            switch (status) {
                 case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedAlways:
                     return Status.Authorized;
                 case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse:
@@ -16,6 +15,10 @@ export namespace PermissionsIOS {
                 default:
                     return Status.Undetermined;
             }
+        }
+        export function getStatusForType(type?: string): Status {
+            const status2 = CLLocationManager.authorizationStatus();
+            return getStatusFromCLAuthorizationStatus(status2, type);
         }
         let locationManager: CLLocationManager;
         export type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
@@ -68,12 +71,9 @@ export namespace PermissionsIOS {
                                     locationManager.delegate = null;
                                     locationManager = null;
                                 }
-                                // for some reason, checking permission right away returns denied. need to wait a tiny bit
-                                setTimeout(() => {
-                                    resolve(getStatusForType());
-                                }, 100);
-                            } else {
-                                reject('kCLAuthorizationStatusNotDetermined');
+                                resolve(getStatusFromCLAuthorizationStatus(status, type));
+                            // } else {
+                                // reject('kCLAuthorizationStatusNotDetermined');
                             }
                         }
                     };
@@ -86,6 +86,11 @@ export namespace PermissionsIOS {
                         }
                     } catch (e) {
                         reject(e);
+                        if (locationManager) {
+                            (locationManager.delegate as CLLocationManagerDelegateImpl).removeSubDelegate(subD);
+                            locationManager.delegate = null;
+                            locationManager = null;
+                        }
                     }
                 });
             } else {
@@ -620,4 +625,3 @@ export function checkMultiple(permissions: string[]) {
         }, {})
     );
 }
-
