@@ -2,6 +2,8 @@ import * as application from 'tns-core-modules/application';
 import * as applicationSettings from 'tns-core-modules/application-settings';
 import { CheckOptions, Rationale, RequestOptions, Status } from './permissions';
 
+export * from './permissions.common'
+
 export const permissionTypes = {
     get location() {
         return android.Manifest.permission.ACCESS_FINE_LOCATION;

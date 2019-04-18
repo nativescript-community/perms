@@ -1,4 +1,6 @@
-import { CheckOptions, RequestOptions, Status } from './permissions';
+import { CheckOptions, RequestOptions } from './permissions';
+import { CLog, CLogTypes } from './permissions.common';
+export * from './permissions.common'
 
 export namespace PermissionsIOS {
     namespace NSPLocation {
@@ -65,6 +67,7 @@ export namespace PermissionsIOS {
                     }
                     const subD = {
                         locationManagerDidChangeAuthorizationStatus: (manager, status: CLAuthorizationStatus) => {
+                            CLog(CLogTypes.info, 'locationManagerDidChangeAuthorizationStatus', status);
                             if (status !== CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined) {
                                 if (locationManager) {
                                     (locationManager.delegate as CLLocationManagerDelegateImpl).removeSubDelegate(subD);
@@ -72,7 +75,7 @@ export namespace PermissionsIOS {
                                     locationManager = null;
                                 }
                                 resolve(getStatusFromCLAuthorizationStatus(status, type));
-                            // } else {
+                                // } else {
                                 // reject('kCLAuthorizationStatusNotDetermined');
                             }
                         }

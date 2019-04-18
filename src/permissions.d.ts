@@ -1,3 +1,5 @@
+export function setDebug(debug:boolean)
+
 export type Status = 'authorized' | 'denied' | 'restricted' | 'undetermined';
 
 export type Permissions =
