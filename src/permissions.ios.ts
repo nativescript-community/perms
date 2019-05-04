@@ -579,9 +579,13 @@ export function getTypes() {
 
 export function check(permission: string, options?: CheckOptions) {
     if (permissionTypes.indexOf(permission) === -1) {
-        const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
+        // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
 
-        return Promise.reject(error);
+        // return Promise.reject(error);
+        console.warn(`nativescript-perms: ${permission} is not a valid permission type on iOS`);
+        // const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
+
+        return Promise.resolve('authorized');
     }
 
     let type;
@@ -597,13 +601,14 @@ export function check(permission: string, options?: CheckOptions) {
 
 export function request(permission: string, options?: RequestOptions) {
     if (permissionTypes.indexOf(permission) === -1) {
-        const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
+        // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
+        console.warn(`nativescript-perms: ${permission} is not a valid permission type on iOS`);
 
-        return Promise.reject(error);
+        return Promise.resolve('authorized');
     }
 
     if (permission === 'backgroundRefresh') {
-        const error = new Error('ReactNativePermissions: You cannot request backgroundRefresh');
+        const error = new Error('nativescript-perms: You cannot request backgroundRefresh');
 
         return Promise.reject(error);
     }

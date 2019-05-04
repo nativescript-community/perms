@@ -264,9 +264,10 @@ export function getTypes() {
 
 export function check(permission: string, options?: CheckOptions) {
     if (!permissionTypes[permission]) {
-        const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on Android`);
+        console.warn(`nativescript-perms: ${permission} is not a valid permission type on Android`);
+        // const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
 
-        return Promise.reject(error);
+        return Promise.resolve('authorized' as Status);
     }
 
     return PermissionsAndroid.check(permissionTypes[permission]).then(isAuthorized => {
