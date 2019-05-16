@@ -30,6 +30,9 @@ export namespace PermissionsIOS {
             private subDelegates: SubCLLocationManagerDelegate[];
 
             public addSubDelegate(delegate: SubCLLocationManagerDelegate) {
+                if (!this.subDelegates) {
+                    this.subDelegates = [];
+                }
                 const index = this.subDelegates.indexOf(delegate);
                 if (index === -1) {
                     this.subDelegates.push(delegate);
@@ -45,12 +48,12 @@ export namespace PermissionsIOS {
             static new(): CLLocationManagerDelegateImpl {
                 return super.new() as CLLocationManagerDelegateImpl;
             }
-            public initDelegate(): CLLocationManagerDelegateImpl {
+            public initDelegate() {
                 this.subDelegates = [];
                 return this;
             }
             locationManagerDidChangeAuthorizationStatus(manager, status: CLAuthorizationStatus) {
-                this.subDelegates.forEach(d => {
+                this.subDelegates && this.subDelegates.forEach(d => {
                     if (d.locationManagerDidChangeAuthorizationStatus) {
                         d.locationManagerDidChangeAuthorizationStatus(manager, status);
                     }
