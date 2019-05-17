@@ -23,6 +23,7 @@ export namespace PermissionsIOS {
             return getStatusFromCLAuthorizationStatus(status2, type);
         }
         let locationManager: CLLocationManager;
+        let locationManagerDelegate: CLLocationManagerDelegateImpl;
         export type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
         export class CLLocationManagerDelegateImpl extends NSObject implements CLLocationManagerDelegate {
             public static ObjCProtocols = [CLLocationManagerDelegate];
@@ -66,7 +67,7 @@ export namespace PermissionsIOS {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
-                        locationManager.delegate = CLLocationManagerDelegateImpl.new().initDelegate();
+                        locationManagerDelegate = locationManager.delegate = CLLocationManagerDelegateImpl.new().initDelegate();
                     }
                     const subD = {
                         locationManagerDidChangeAuthorizationStatus: (manager, status: CLAuthorizationStatus) => {
@@ -76,6 +77,7 @@ export namespace PermissionsIOS {
                                     (locationManager.delegate as CLLocationManagerDelegateImpl).removeSubDelegate(subD);
                                     locationManager.delegate = null;
                                     locationManager = null;
+                                    locationManagerDelegate = null;
                                 }
                                 resolve(getStatusFromCLAuthorizationStatus(status, type));
                                 // } else {
