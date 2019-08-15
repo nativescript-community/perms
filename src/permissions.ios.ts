@@ -1,8 +1,14 @@
 import { CheckOptions, RequestOptions } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
-export * from './permissions.common'
+export * from './permissions.common';
 
 export namespace PermissionsIOS {
+    export enum Status {
+        Undetermined = 'undetermined',
+        Denied = 'denied',
+        Authorized = 'authorized',
+        Restricted = 'restricted'
+    }
     namespace NSPLocation {
         function getStatusFromCLAuthorizationStatus(status: CLAuthorizationStatus, type?: string): Status {
             switch (status) {
@@ -54,11 +60,12 @@ export namespace PermissionsIOS {
                 return this;
             }
             locationManagerDidChangeAuthorizationStatus(manager, status: CLAuthorizationStatus) {
-                this.subDelegates && this.subDelegates.forEach(d => {
-                    if (d.locationManagerDidChangeAuthorizationStatus) {
-                        d.locationManagerDidChangeAuthorizationStatus(manager, status);
-                    }
-                });
+                this.subDelegates &&
+                    this.subDelegates.forEach(d => {
+                        if (d.locationManagerDidChangeAuthorizationStatus) {
+                            d.locationManagerDidChangeAuthorizationStatus(manager, status);
+                        }
+                    });
             }
         }
         export function request(type): Promise<Status> {
@@ -264,37 +271,42 @@ export namespace PermissionsIOS {
         }
     }
     namespace NSPMotion {
+        let status: Status = Status.Undetermined;
         export function getStatus(): Status {
-            const status = CMMotionActivityManager.authorizationStatus();
-            switch (status) {
-                case CMAuthorizationStatus.Authorized:
-                    return Status.Authorized;
-                case CMAuthorizationStatus.Denied:
-                    return Status.Denied;
-                case CMAuthorizationStatus.Restricted:
-                    return Status.Restricted;
-                default:
-                    return Status.Undetermined;
+            if (status === Status.Undetermined) {
+                const cmStatus = (CMMotionActivityManager.authorizationStatus as any) as CMAuthorizationStatus;
+                switch (cmStatus) {
+                    case CMAuthorizationStatus.Authorized:
+                        status = Status.Authorized;
+                        break;
+                    case CMAuthorizationStatus.Denied:
+                        status = Status.Denied;
+                        break;
+                    case CMAuthorizationStatus.Restricted:
+                        status = Status.Restricted;
+                        break;
+                }
             }
+            return status;
         }
 
         export function request(): Promise<Status> {
-            let status = getStatus();
             if (status === Status.Undetermined) {
                 return new Promise(resolve => {
                     let activityManager = CMMotionActivityManager.new();
                     let motionActivityQueue = NSOperationQueue.new();
+                    console.log('NSPMotion request', status);
                     activityManager.queryActivityStartingFromDateToDateToQueueWithHandler(NSDate.distantPast, new Date(), motionActivityQueue, (activities, error) => {
                         if (error) {
                             status = Status.Denied;
                         } else if (activities || !error) {
                             status = Status.Authorized;
                         }
-                        resolve(getStatus());
+                        console.log('NSPMotion got response', activities, error, status, getStatus());
+                        resolve(status);
                         activityManager = null;
                         motionActivityQueue = null;
                     });
-                    MPMediaLibrary.requestAuthorization(() => resolve(getStatus()));
                 });
             } else {
                 return Promise.resolve(status);
@@ -431,12 +443,6 @@ export namespace PermissionsIOS {
             });
         }
     }
-    export enum Status {
-        Undetermined = 'undetermined',
-        Denied = 'denied',
-        Authorized = 'authorized',
-        Restricted = 'restricted'
-    }
 
     export enum NSType {
         Unknown,
@@ -471,6 +477,7 @@ export namespace PermissionsIOS {
     }
     export function getPermissionStatus(type, json): Promise<Status> {
         let status;
+        console.log(`nativescript-perms: getPermissionStatus ${type}`);
 
         switch (type) {
             case NSType.Location: {
@@ -521,6 +528,7 @@ export namespace PermissionsIOS {
         return Promise.resolve(status);
     }
     export function requestPermission(type, json): Promise<Status> {
+        console.log(`nativescript-perms: requestPermission ${type}`);
         switch (type) {
             case NSType.Location:
                 return NSPLocation.request(json);
@@ -583,6 +591,7 @@ export function getTypes() {
 }
 
 export function check(permission: string, options?: CheckOptions) {
+    console.log(`nativescript-perms: check ${permission}`);
     if (permissionTypes.indexOf(permission) === -1) {
         // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
 
@@ -605,6 +614,7 @@ export function check(permission: string, options?: CheckOptions) {
 }
 
 export function request(permission: string, options?: RequestOptions) {
+    console.log(`nativescript-perms: request ${permission}`);
     if (permissionTypes.indexOf(permission) === -1) {
         // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
         console.warn(`nativescript-perms: ${permission} is not a valid permission type on iOS`);
