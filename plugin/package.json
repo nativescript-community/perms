@@ -1,6 +1,6 @@
 {
     "name": "nativescript-perms",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Nativescript Permissions plugin.",
     "main": "./permissions",
     "typings": "./permissions.d.ts",
