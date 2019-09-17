@@ -70,6 +70,7 @@ export namespace PermissionsIOS {
         }
         export function request(type): Promise<Status> {
             const status = getStatusForType(undefined);
+            CLog(CLogTypes.info, 'NSPLocation request', type, status);
             if (status === Status.Undetermined) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
@@ -94,6 +95,7 @@ export namespace PermissionsIOS {
                     };
                     (locationManager.delegate as CLLocationManagerDelegateImpl).addSubDelegate(subD);
                     try {
+                        CLog(CLogTypes.info, 'NSPLocation requestAuthorization', type);
                         if (type === 'always') {
                             locationManager.requestAlwaysAuthorization();
                         } else {
@@ -295,14 +297,14 @@ export namespace PermissionsIOS {
                 return new Promise(resolve => {
                     let activityManager = CMMotionActivityManager.new();
                     let motionActivityQueue = NSOperationQueue.new();
-                    console.log('NSPMotion request', status);
+                    CLog(CLogTypes.info, 'NSPMotion request', status);
                     activityManager.queryActivityStartingFromDateToDateToQueueWithHandler(NSDate.distantPast, new Date(), motionActivityQueue, (activities, error) => {
                         if (error) {
                             status = Status.Denied;
                         } else if (activities || !error) {
                             status = Status.Authorized;
                         }
-                        console.log('NSPMotion got response', activities, error, status, getStatus());
+                        CLog(CLogTypes.info, 'NSPMotion got response', activities, error, status, getStatus());
                         resolve(status);
                         activityManager = null;
                         motionActivityQueue = null;
@@ -477,7 +479,7 @@ export namespace PermissionsIOS {
     }
     export function getPermissionStatus(type, json): Promise<Status> {
         let status;
-        console.log(`nativescript-perms: getPermissionStatus ${type}`);
+        CLog(CLogTypes.info, `nativescript-perms: getPermissionStatus ${type}`);
 
         switch (type) {
             case NSType.Location: {
@@ -528,7 +530,7 @@ export namespace PermissionsIOS {
         return Promise.resolve(status);
     }
     export function requestPermission(type, json): Promise<Status> {
-        console.log(`nativescript-perms: requestPermission ${type}`);
+        CLog(CLogTypes.info, `nativescript-perms: requestPermission ${type}`);
         switch (type) {
             case NSType.Location:
                 return NSPLocation.request(json);
@@ -591,12 +593,12 @@ export function getTypes() {
 }
 
 export function check(permission: string, options?: CheckOptions) {
-    console.log(`nativescript-perms: check ${permission}`);
+    CLog(CLogTypes.info, `nativescript-perms: check ${permission}`);
     if (permissionTypes.indexOf(permission) === -1) {
         // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
 
         // return Promise.reject(error);
-        console.warn(`nativescript-perms: ${permission} is not a valid permission type on iOS`);
+        CLog(CLogTypes.warning, `nativescript-perms: ${permission} is not a valid permission type on iOS`);
         // const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
 
         return Promise.resolve('authorized');
@@ -614,10 +616,10 @@ export function check(permission: string, options?: CheckOptions) {
 }
 
 export function request(permission: string, options?: RequestOptions) {
-    console.log(`nativescript-perms: request ${permission}`);
+    CLog(CLogTypes.info, `nativescript-perms: request ${permission}`);
     if (permissionTypes.indexOf(permission) === -1) {
         // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
-        console.warn(`nativescript-perms: ${permission} is not a valid permission type on iOS`);
+        CLog(CLogTypes.warning, `nativescript-perms: ${permission} is not a valid permission type on iOS`);
 
         return Promise.resolve('authorized');
     }
