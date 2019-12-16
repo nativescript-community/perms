@@ -2,7 +2,7 @@ import * as application from 'tns-core-modules/application';
 import * as applicationSettings from 'tns-core-modules/application-settings';
 import { CheckOptions, Rationale, RequestOptions, Status } from './permissions';
 
-export * from './permissions.common'
+export * from './permissions.common';
 
 export const permissionTypes = {
     get location() {
@@ -127,7 +127,7 @@ namespace PermissionsAndroid {
      *
      * See https://facebook.github.io/react-native/docs/permissionsandroid.html#requestmultiple
      */
-    export function requestMultiple(permissions: string[]): Promise<{ [permission: string]: Status }> {
+    export function requestMultiple(permissions: string[]): Promise<{ [permission: string]: [Status, boolean] }> {
         return requestMultiplePermissions(permissions);
     }
 }
@@ -171,7 +171,7 @@ function requestPermission(permission: string): Promise<PermissionStatus> {
     });
 }
 
-function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: Status }> {
+function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: [Status, boolean] }> {
     const grantedPermissions = {};
     const permissionsToCheck = [];
     let checkedPermissionsCount = 0;
@@ -262,30 +262,30 @@ export function getTypes() {
     return Object.keys(permissionTypes);
 }
 
-export function check(permission: string, options?: CheckOptions) {
+export function check(permission: string, options?: CheckOptions): Promise<[Status, boolean]> {
     if (!permissionTypes[permission]) {
         console.warn(`nativescript-perms: ${permission} is not a valid permission type on Android`);
         // const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
 
-        return Promise.resolve('authorized' as Status);
+        return Promise.resolve(['authorized', true]);
     }
 
     return PermissionsAndroid.check(permissionTypes[permission]).then(isAuthorized => {
         if (isAuthorized) {
-            return Promise.resolve('authorized' as Status);
+            return Promise.resolve(['authorized', true]);
         }
 
         return getDidAskOnce(permission).then(didAsk => {
             if (didAsk) {
-                return shouldShowRequestPermissionRationale(permissionTypes[permission]).then(shouldShow => (shouldShow ? 'denied' : 'restricted') as Status);
+                return shouldShowRequestPermissionRationale(permissionTypes[permission]).then(shouldShow => [shouldShow ? 'denied' : 'restricted', true]);
             }
 
-            return Promise.resolve('undetermined' as Status);
+            return Promise.resolve(['undetermined', true]);
         });
     });
 }
 
-export function request(permission: string, options?: RequestOptions) {
+export function request(permission: string, options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
     const types = permissionTypes[permission];
     if (!types) {
         const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on Android`);
@@ -301,10 +301,10 @@ export function request(permission: string, options?: RequestOptions) {
         // PermissionsAndroid.request() to native module resolves to boolean
         // rather than string if running on OS version prior to Android M
         if (typeof result === 'boolean') {
-            return result ? 'authorized' : 'denied';
+            return [result ? 'authorized' : 'denied', true];
         }
 
-        return setDidAskOnce(permission).then(() => PermissionStatus[result]);
+        return setDidAskOnce(permission).then(() => [PermissionStatus[result], true]);
     });
 }
 

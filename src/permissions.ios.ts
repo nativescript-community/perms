@@ -10,21 +10,29 @@ export namespace PermissionsIOS {
         Restricted = 'restricted'
     }
     namespace NSPLocation {
-        function getStatusFromCLAuthorizationStatus(status: CLAuthorizationStatus, type?: string): Status {
-            switch (status) {
+        let status: Status = Status.Undetermined;
+        function getStatusFromCLAuthorizationStatus(lStatus: CLAuthorizationStatus, type?: string): [Status, boolean] {
+            let always = true;
+            switch (lStatus) {
                 case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedAlways:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse:
-                    return type === 'always' ? Status.Denied : Status.Authorized;
+                    always = false;
+                    status = Status.Authorized;
+                    break;
                 case CLAuthorizationStatus.kCLAuthorizationStatusDenied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case CLAuthorizationStatus.kCLAuthorizationStatusRestricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, always];
         }
-        export function getStatusForType(type?: string): Status {
+        export function getStatusForType(type?: string): [Status, boolean] {
             const status2 = CLLocationManager.authorizationStatus();
             return getStatusFromCLAuthorizationStatus(status2, type);
         }
@@ -68,10 +76,10 @@ export namespace PermissionsIOS {
                     });
             }
         }
-        export function request(type): Promise<Status> {
+        export function request(type): Promise<[Status, boolean]> {
             const status = getStatusForType(undefined);
             CLog(CLogTypes.info, 'NSPLocation request', type, status);
-            if (status === Status.Undetermined) {
+            if (status[0] === Status.Undetermined || (type === 'always' && status[0] === Status.Authorized && status[1] === false)) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
@@ -87,7 +95,8 @@ export namespace PermissionsIOS {
                                     locationManager = null;
                                     locationManagerDelegate = null;
                                 }
-                                resolve(getStatusFromCLAuthorizationStatus(status, type));
+                                const rStatus = getStatusFromCLAuthorizationStatus(status, type);
+                                resolve(rStatus);
                                 // } else {
                                 // reject('kCLAuthorizationStatusNotDetermined');
                             }
@@ -111,27 +120,32 @@ export namespace PermissionsIOS {
                     }
                 });
             } else {
-                if (CLLocationManager.authorizationStatus() === CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse && type === 'always') {
-                    return Promise.resolve(Status.Denied);
-                } else {
+                // if (CLLocationManager.authorizationStatus() === CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse && type === 'always') {
+                //     return Promise.resolve(Status.Denied);
+                // } else {
                     return Promise.resolve(status);
-                }
+                // }
             }
         }
     }
     namespace NSPBluetooth {
-        export function getStatus(): Status {
+        let status: Status = Status.Undetermined;
+        export function getStatus(): [Status, boolean] {
             const status2 = CBPeripheralManager.authorizationStatus();
             switch (status2) {
                 case CBPeripheralManagerAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case CBPeripheralManagerAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case CBPeripheralManagerAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
         export type SubCBPeripheralManagerDelegate = Partial<CBPeripheralManagerDelegate>;
         export class CBPeripheralManagerDelegateImpl extends NSObject implements CBPeripheralManagerDelegate {
@@ -168,9 +182,9 @@ export namespace PermissionsIOS {
             }
         }
         let peripheralManager: CBPeripheralManager;
-        export function request(): Promise<Status> {
+        export function request(): Promise<[Status, boolean]> {
             const status = getStatus();
-            if (status === Status.Undetermined) {
+            if (status[0] === Status.Undetermined) {
                 return new Promise((resolve, reject) => {
                     if (!peripheralManager) {
                         peripheralManager = CBPeripheralManager.new();
@@ -203,6 +217,7 @@ export namespace PermissionsIOS {
         }
     }
     namespace NSPAudioVideo {
+        let status: Status = Status.Undetermined;
         function typeFromString(value: string) {
             if (value === 'audio') {
                 return AVMediaTypeAudio;
@@ -210,63 +225,77 @@ export namespace PermissionsIOS {
                 return AVMediaTypeVideo;
             }
         }
-        export function getStatus(type?: string): Status {
-            const status = AVCaptureDevice.authorizationStatusForMediaType(typeFromString(type));
-            switch (status) {
+        export function getStatus(type?: string): [Status, boolean] {
+            const videoStatus = AVCaptureDevice.authorizationStatusForMediaType(typeFromString(type));
+            switch (videoStatus) {
                 case AVAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case AVAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case AVAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(type): Promise<Status> {
+        export function request(type): Promise<[Status, boolean]> {
             return new Promise((resolve, reject) => {
                 AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(type, granted => resolve(getStatus(type)));
             });
         }
     }
     namespace NSPSpeechRecognition {
-        export function getStatus(): Status {
-            const status = SFSpeechRecognizer.authorizationStatus();
-            switch (status) {
+        let status: Status = Status.Undetermined;
+        export function getStatus(): [Status, boolean] {
+            const speechStatus = SFSpeechRecognizer.authorizationStatus();
+            switch (speechStatus) {
                 case SFSpeechRecognizerAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case SFSpeechRecognizerAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case SFSpeechRecognizerAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(): Promise<Status> {
+        export function request(): Promise<[Status, boolean]> {
             return new Promise(resolve => {
                 SFSpeechRecognizer.requestAuthorization(() => resolve(getStatus()));
             });
         }
     }
     namespace NSPPhoto {
-        export function getStatus(): Status {
-            const status = PHPhotoLibrary.authorizationStatus();
-            switch (status) {
+        let status: Status = Status.Undetermined;
+        export function getStatus(): [Status, boolean] {
+            const photoStatus = PHPhotoLibrary.authorizationStatus();
+            switch (photoStatus) {
                 case PHAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case PHAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case PHAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(): Promise<Status> {
+        export function request(): Promise<[Status, boolean]> {
             return new Promise(resolve => {
                 PHPhotoLibrary.requestAuthorization(() => resolve(getStatus()));
             });
@@ -274,7 +303,7 @@ export namespace PermissionsIOS {
     }
     namespace NSPMotion {
         let status: Status = Status.Undetermined;
-        export function getStatus(): Status {
+        export function getStatus(): [Status, boolean] {
             if (status === Status.Undetermined) {
                 const cmStatus = (CMMotionActivityManager.authorizationStatus as any) as CMAuthorizationStatus;
                 switch (cmStatus) {
@@ -289,10 +318,10 @@ export namespace PermissionsIOS {
                         break;
                 }
             }
-            return status;
+            return [status, true];
         }
 
-        export function request(): Promise<Status> {
+        export function request(): Promise<[Status, boolean]> {
             if (status === Status.Undetermined) {
                 return new Promise(resolve => {
                     let activityManager = CMMotionActivityManager.new();
@@ -305,54 +334,61 @@ export namespace PermissionsIOS {
                             status = Status.Authorized;
                         }
                         CLog(CLogTypes.info, 'NSPMotion got response', activities, error, status, getStatus());
-                        resolve(status);
+                        resolve([status, true]);
                         activityManager = null;
                         motionActivityQueue = null;
                     });
                 });
             } else {
-                return Promise.resolve(status);
+                return Promise.resolve([status, true]);
             }
         }
     }
     namespace NSPMediaLibrary {
-        export function getStatus(): Status {
-            const status = MPMediaLibrary.authorizationStatus();
-            switch (status) {
+        let status: Status = Status.Undetermined;
+        export function getStatus(): [Status, boolean] {
+            const mediaStatus = MPMediaLibrary.authorizationStatus();
+            switch (mediaStatus) {
                 case MPMediaLibraryAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case MPMediaLibraryAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case MPMediaLibraryAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(): Promise<Status> {
+        export function request(): Promise<[Status, boolean]> {
             return new Promise(resolve => {
                 MPMediaLibrary.requestAuthorization(() => resolve(getStatus()));
             });
         }
     }
     namespace NSPNotification {
+        let status: Status = Status.Undetermined;
         const NSPDidAskForNotification = 'NSPDidAskForNotification';
-        export function getStatus(): Status {
+        export function getStatus(): [Status, boolean] {
             const didAskForPermission = NSUserDefaults.standardUserDefaults.boolForKey(NSPDidAskForNotification);
             const isEnabled = UIApplication.sharedApplication.currentUserNotificationSettings.types !== UIUserNotificationType.None;
 
             if (isEnabled) {
-                return Status.Authorized;
+                status = Status.Authorized;
             } else {
-                return didAskForPermission ? Status.Denied : Status.Undetermined;
+                status = didAskForPermission ? Status.Denied : Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(types: UIUserNotificationType): Promise<Status> {
+        export function request(types: UIUserNotificationType): Promise<[Status, boolean]> {
             const status = getStatus();
 
-            if (status === Status.Undetermined) {
+            if (status[0] === Status.Undetermined) {
                 return new Promise(resolve => {
                     const observer = function() {
                         resolve(getStatus());
@@ -373,21 +409,26 @@ export namespace PermissionsIOS {
         }
     }
     namespace NSPContacts {
-        export function getStatus(): Status {
-            const status = CNContactStore.authorizationStatusForEntityType(CNEntityType.Contacts);
-            switch (status) {
+        let status: Status = Status.Undetermined;
+        export function getStatus(): [Status, boolean] {
+            const contactStatus = CNContactStore.authorizationStatusForEntityType(CNEntityType.Contacts);
+            switch (contactStatus) {
                 case CNAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case CNAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case CNAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(): Promise<Status> {
+        export function request(): Promise<[Status, boolean]> {
             return new Promise(resolve => {
                 const contactStore = CNContactStore.new();
                 contactStore.requestAccessForEntityTypeCompletionHandler(CNEntityType.Contacts, () => resolve(getStatus()));
@@ -395,28 +436,34 @@ export namespace PermissionsIOS {
         }
     }
     namespace NSPBackgroundRefresh {
-        export function getStatus(): Status {
-            const status = UIApplication.sharedApplication.backgroundRefreshStatus;
-            switch (status) {
+        let status: Status = Status.Undetermined;
+        export function getStatus(): [Status, boolean] {
+            const refreshStatus = UIApplication.sharedApplication.backgroundRefreshStatus;
+            switch (refreshStatus) {
                 case UIBackgroundRefreshStatus.Available:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case UIBackgroundRefreshStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case UIBackgroundRefreshStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
         export function request(): Promise<Status> {
             return new Promise(resolve => {
                 const contactStore = CNContactStore.new();
-                contactStore.requestAccessForEntityTypeCompletionHandler(CNEntityType.Contacts, () => resolve(getStatus()));
+                contactStore.requestAccessForEntityTypeCompletionHandler(CNEntityType.Contacts, () => resolve(getStatus()[0]));
             });
         }
     }
     namespace NSPEvent {
+        let status: Status = Status.Undetermined;
         function typeFromString(value: string) {
             if (value === 'reminder') {
                 return EKEntityType.Reminder;
@@ -424,21 +471,25 @@ export namespace PermissionsIOS {
                 return EKEntityType.Event;
             }
         }
-        export function getStatus(type?: string): Status {
-            const status = EKEventStore.authorizationStatusForEntityType(typeFromString(type));
-            switch (status) {
+        export function getStatus(type?: string): [Status, boolean] {
+            const eventStatus = EKEventStore.authorizationStatusForEntityType(typeFromString(type));
+            switch (eventStatus) {
                 case EKAuthorizationStatus.Authorized:
-                    return Status.Authorized;
+                    status = Status.Authorized;
+                    break;
                 case EKAuthorizationStatus.Denied:
-                    return Status.Denied;
+                    status = Status.Denied;
+                    break;
                 case EKAuthorizationStatus.Restricted:
-                    return Status.Restricted;
+                    status = Status.Restricted;
+                    break;
                 default:
-                    return Status.Undetermined;
+                    status = Status.Undetermined;
             }
+            return [status, true];
         }
 
-        export function request(type?: string): Promise<Status> {
+        export function request(type?: string): Promise<[Status, boolean]> {
             return new Promise(resolve => {
                 const aStore = EKEventStore.new();
                 aStore.requestAccessToEntityTypeCompletion(typeFromString(type), () => resolve(getStatus(type)));
@@ -477,8 +528,8 @@ export namespace PermissionsIOS {
     export function canOpenSettings() {
         return Promise.resolve(UIApplicationOpenSettingsURLString !== null);
     }
-    export function getPermissionStatus(type, json): Promise<Status> {
-        let status;
+    export function getPermissionStatus(type, json): Promise<[Status, boolean]> {
+        let status: [Status, boolean];
         CLog(CLogTypes.info, `nativescript-perms: getPermissionStatus ${type}`);
 
         switch (type) {
@@ -529,7 +580,7 @@ export namespace PermissionsIOS {
 
         return Promise.resolve(status);
     }
-    export function requestPermission(type, json): Promise<Status> {
+    export function requestPermission(type, json): Promise<[Status, boolean]> {
         CLog(CLogTypes.info, `nativescript-perms: requestPermission ${type}`);
         switch (type) {
             case NSType.Location:

@@ -19,7 +19,7 @@ This is a port of [react-native-permissions](https://github.com/yonahforst/react
 
 ### Permissions statuses
 
-Promises resolve into one of these statuses:
+Promises resolve into ```[status:Status, always:boolean]``` where status is one of these statuses:
 
 | Return value   | Notes                                                                                                                                                                                                                                                                  |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -78,16 +78,16 @@ The current supported permissions are:
 ```js
 // example
 Permissions.check('location', { type: 'always' }).then(response => {
-  this.setState({ locationPermission: response })
+  this.setState({ locationPermission: response[0] })
 })
 
 Permissions.request('location', { type: 'always' }).then(response => {
-  this.setState({ locationPermission: response })
+  this.setState({ locationPermission: response[0] })
 })
 
 Permissions.request('notification', { type: ['alert', 'badge'] }).then(
   response => {
-    this.setState({ notificationPermission: response })
+    this.setState({ notificationPermission: response[0] })
   },
 )
 ```
@@ -162,7 +162,7 @@ Permissions.request('camera', {
       'so you can take awesome pictures.',
   },
 }).then(response => {
-  this.setState({ cameraPermission: response })
+  this.setState({ cameraPermission: response[0] })
 })
 ```
 
