@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/Akylas/nativescript-perms/compare/v1.0.10...v2.0.0) (2019-12-16)
+
+
+### Bug Fixes
+
+* return always status ([3ebfd5c](https://github.com/Akylas/nativescript-perms/commit/3ebfd5c))
+
+
+### BREAKING CHANGES
+
+* return always in promises
+
+
+
+
+
 ## [1.0.10](https://github.com/Akylas/nativescript-perms/compare/v1.0.9...v1.0.10) (2019-10-22)
 
 

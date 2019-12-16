@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/farfromrefug/nativescript-perms/compare/v1.0.10...v2.0.0) (2019-12-16)
+
+**Note:** Version bump only for package nativescript-perms
+
+
+
+
+
 ## [1.0.10](https://github.com/farfromrefug/nativescript-perms/compare/v1.0.9...v1.0.10) (2019-10-22)
 
 
