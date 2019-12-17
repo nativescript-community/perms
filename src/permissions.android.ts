@@ -288,7 +288,7 @@ export function check(permission: string, options?: CheckOptions): Promise<[Stat
 export function request(permission: string, options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
     const types = permissionTypes[permission];
     if (!types) {
-        const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on Android`);
+        const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
 
         return Promise.reject(error);
     }
