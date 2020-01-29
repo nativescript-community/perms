@@ -44,7 +44,7 @@ const setDidAskOnce = (permission: string) => Promise.resolve().then(() => appli
 const getDidAskOnce = (permission: string) => Promise.resolve(!!applicationSettings.getBoolean(STORAGE_KEY + permission));
 
 export enum PermissionStatus {
-    GRANTED = 'granted',
+    GRANTED = 'authorized',
     DENIED = 'denied',
     NEVER_ASK_AGAIN = 'never_ask_again'
 }
@@ -81,7 +81,7 @@ namespace PermissionsAndroid {
     };
 
     export const RESULTS = {
-        GRANTED: 'granted',
+        GRANTED: 'authorized',
         DENIED: 'denied',
         NEVER_ASK_AGAIN: 'never_ask_again'
     };
@@ -304,7 +304,7 @@ export function request(permission: string, options?: RequestOptions): Promise<[
             return [result ? 'authorized' : 'denied', true];
         }
 
-        return setDidAskOnce(permission).then(() => [PermissionStatus[result], true]);
+        return setDidAskOnce(permission).then(() => [result as Status, true]);
     });
 }
 
