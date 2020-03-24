@@ -246,7 +246,7 @@ export namespace PermissionsIOS {
 
         export function request(type): Promise<[Status, boolean]> {
             return new Promise((resolve, reject) => {
-                AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(type, granted => resolve(getStatus(type)));
+                AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(typeFromString(type), granted => resolve(getStatus(type)));
             });
         }
     }
