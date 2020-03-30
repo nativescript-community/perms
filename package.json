@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "tsc": "cp src/permissions.d.ts plugin && cp README.md plugin && tsc -skipLibCheck",
-        "build": "npm i && npm run tsc",
+        "build": "npm run tsc",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
