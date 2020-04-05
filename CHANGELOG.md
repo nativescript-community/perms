@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.6](https://github.com/Akylas/nativescript-perms/compare/v2.0.5...v2.0.6) (2020-04-05)
+
+
+### Bug Fixes
+
+* **ios:** improving fix ([5903b46](https://github.com/Akylas/nativescript-perms/commit/5903b46))
+* **ios:** trying to fix a crash with location permissions ([e6eb678](https://github.com/Akylas/nativescript-perms/commit/e6eb678))
+
+
+
+
+
 ## [2.0.5](https://github.com/Akylas/nativescript-perms/compare/v2.0.4...v2.0.5) (2020-03-30)
 
 
