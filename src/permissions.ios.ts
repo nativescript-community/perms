@@ -84,6 +84,8 @@ export namespace PermissionsIOS {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
+                    }
+                    if (!locationManagerDelegate) {
                         locationManagerDelegate = CLLocationManagerDelegateImpl.new().initDelegate();
                         locationManager.delegate = locationManagerDelegate;
                     }
