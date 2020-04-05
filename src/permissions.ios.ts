@@ -84,17 +84,20 @@ export namespace PermissionsIOS {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
-                        locationManagerDelegate = locationManager.delegate = CLLocationManagerDelegateImpl.new().initDelegate();
+                        locationManagerDelegate = CLLocationManagerDelegateImpl.new().initDelegate();
+                        locationManager.delegate = locationManagerDelegate;
                     }
                     const subD = {
                         locationManagerDidChangeAuthorizationStatus: (manager, status: CLAuthorizationStatus) => {
                             CLog(CLogTypes.info, 'locationManagerDidChangeAuthorizationStatus', status);
                             if (status !== CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined) {
+                                if (locationManagerDelegate) {
+                                    locationManagerDelegate.removeSubDelegate(subD);
+                                    locationManagerDelegate = null;
+                                }
                                 if (locationManager) {
-                                    (locationManager.delegate as CLLocationManagerDelegateImpl).removeSubDelegate(subD);
                                     locationManager.delegate = null;
                                     locationManager = null;
-                                    locationManagerDelegate = null;
                                 }
                                 const rStatus = getStatusFromCLAuthorizationStatus(status, type);
                                 resolve(rStatus);
@@ -103,7 +106,7 @@ export namespace PermissionsIOS {
                             }
                         }
                     };
-                    (locationManager.delegate as CLLocationManagerDelegateImpl).addSubDelegate(subD);
+                    locationManagerDelegate.addSubDelegate(subD);
                     try {
                         CLog(CLogTypes.info, 'NSPLocation requestAuthorization', type);
                         if (type === 'always') {
@@ -113,8 +116,11 @@ export namespace PermissionsIOS {
                         }
                     } catch (e) {
                         reject(e);
+                        if (locationManagerDelegate) {
+                            locationManagerDelegate.removeSubDelegate(subD);
+                            locationManagerDelegate = null;
+                        }
                         if (locationManager) {
-                            (locationManager.delegate as CLLocationManagerDelegateImpl).removeSubDelegate(subD);
                             locationManager.delegate = null;
                             locationManager = null;
                         }
