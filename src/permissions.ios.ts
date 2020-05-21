@@ -68,7 +68,7 @@ export namespace PermissionsIOS {
                 this.subDelegates = [];
                 return this;
             }
-            locationManagerDidChangeAuthorizationStatus(manager, status: CLAuthorizationStatus) {
+            locationManagerDidChangeAuthorizationStatus(manager: CLLocationManager, status: CLAuthorizationStatus) {
                 this.subDelegates &&
                     this.subDelegates.forEach(d => {
                         if (d.locationManagerDidChangeAuthorizationStatus) {
@@ -76,6 +76,14 @@ export namespace PermissionsIOS {
                         }
                     });
             }
+            // locationManagerDidFailWithError(manager: CLLocationManager, error: NSError) {
+            //     this.subDelegates &&
+            //         this.subDelegates.forEach(d => {
+            //             if (d.locationManagerDidFailWithError) {
+            //                 d.locationManagerDidFailWithError(manager, error);
+            //             }
+            //         });
+            // }
         }
         export function request(type): Promise<[Status, boolean]> {
             const status = getStatusForType(type);

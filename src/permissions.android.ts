@@ -1,5 +1,5 @@
-import * as application from 'tns-core-modules/application';
-import * as applicationSettings from 'tns-core-modules/application-settings';
+import * as application from '@nativescript/core/application';
+import * as applicationSettings from '@nativescript/core/application-settings';
 import { CheckOptions, Rationale, RequestOptions, Status } from './permissions';
 
 export * from './permissions.common';
