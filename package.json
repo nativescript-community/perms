@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "scripts": {
         "tsc": "cp src/permissions.d.ts plugin && tsc -skipLibCheck -d",
-        "build": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc && npm run build.esm && node ./build.esm.js",
-        "build.esm": "tsc -skipLibCheck --target es2015 --module esnext --removeComments --outDir build/esm",
+        "build": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc && npm run build.esm",
+        "build.esm": "tsc -skipLibCheck --target es2015 --module esnext --removeComments --outDir build/esm && node ./build.esm.js",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
