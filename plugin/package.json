@@ -4,6 +4,7 @@
     "description": "Nativescript Permissions plugin.",
     "main": "./permissions.js",
     "module": "./permissions.mjs",
+    "sideEffects": false,
     "typings": "./permissions.d.ts",
     "nativescript": {
         "platforms": {
