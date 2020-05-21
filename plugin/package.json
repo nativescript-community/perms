@@ -2,8 +2,7 @@
     "name": "nativescript-perms",
     "version": "2.0.9",
     "description": "Nativescript Permissions plugin.",
-    "main": "./permissions.js",
-    "module": "./permissions.mjs",
+    "main": "./permissions",
     "sideEffects": false,
     "typings": "./permissions.d.ts",
     "nativescript": {
