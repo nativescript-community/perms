@@ -4,7 +4,7 @@
     "scripts": {
         "tsc": "cp src/permissions.d.ts plugin && tsc -skipLibCheck -d",
         "build": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc && npm run build.esm",
-        "build.esm": "tsc -skipLibCheck --target es2015 --module esnext --removeComments --outDir build/esm && node ./build.esm.js",
+        "build.esm": "tsc -skipLibCheck --target es2017 --module esnext --removeComments --outDir build/esm && node ./build.esm.js",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
@@ -19,6 +19,7 @@
     "devDependencies": {
         "@commitlint/cli": "^9.0.0",
         "@commitlint/config-conventional": "^9.0.0",
+        "@nativescript/core": "6.5.1",
         "@types/node": "^14.0.4",
         "husky": "^4.2.5",
         "lerna": "^3.21.0",
@@ -27,8 +28,8 @@
         "recursive-copy": "^2.0.10",
         "rimraf": "^3.0.2",
         "through2": "^3.0.1",
-        "@nativescript/core": "6.5.1",
         "tns-platform-declarations": "^6.5.1",
+        "tslib": "^2.0.0",
         "tslint": "^6.1.2",
         "tslint-config-prettier": "^1.18.0",
         "tslint-config-standard": "^9.0.0",
