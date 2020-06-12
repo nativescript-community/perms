@@ -2,7 +2,7 @@
     "description": "NativeScript canvas Demo for Vue",
     "license": "SEE LICENSE IN LICENSE.md",
     "readme": "README.md",
-    "repository": "http://www.github.com/Akylas/nativescript-perms.git",
+    "repository": "http://www.github.com/farfromrefug/nativescript-perms.git",
     "nativescript": {
         "id": "org.nativescript.demovuecanvas",
         "tns-android": {

@@ -22,9 +22,9 @@
         "email": "martin@akylas.fr"
     },
     "bugs": {
-        "url": "https://github.com/Akylas/nativescript-perms/issues"
+        "url": "https://github.com/farfromrefug/nativescript-perms/issues"
     },
     "license": "Apache-2.0",
-    "homepage": "https://github.com/Akylas/nativescript-perms",
+    "homepage": "https://github.com/farfromrefug/nativescript-perms",
     "readmeFilename": "README.md"
 }

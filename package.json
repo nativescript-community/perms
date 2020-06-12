@@ -37,14 +37,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Akylas/nativescript-perms.git"
+        "url": "git+https://github.com/farfromrefug/nativescript-perms.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/Akylas/nativescript-perms/issues"
+        "url": "https://github.com/farfromrefug/nativescript-perms/issues"
     },
-    "homepage": "https://github.com/Akylas/nativescript-perms#readme",
+    "homepage": "https://github.com/farfromrefug/nativescript-perms#readme",
     "commitlint": {
         "extends": [
             "@commitlint/config-conventional"
