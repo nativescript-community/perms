@@ -1,5 +1,5 @@
-import * as application from '@nativescript/core/application';
-import * as applicationSettings from '@nativescript/core/application-settings';
+import {AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp} from '@nativescript/core/application';
+import {getBoolean, setBoolean} from '@nativescript/core/application-settings';
 import { CheckOptions, Rationale, RequestOptions, Status } from './permissions';
 
 export * from './permissions.common';
@@ -39,9 +39,9 @@ export const permissionTypes = {
 
 const STORAGE_KEY = '@NSPermissions:didAskPermission:';
 
-const setDidAskOnce = (permission: string) => Promise.resolve().then(() => applicationSettings.setBoolean(STORAGE_KEY + permission, true));
+const setDidAskOnce = (permission: string) => Promise.resolve().then(() => setBoolean(STORAGE_KEY + permission, true));
 
-const getDidAskOnce = (permission: string) => Promise.resolve(!!applicationSettings.getBoolean(STORAGE_KEY + permission));
+const getDidAskOnce = (permission: string) => Promise.resolve(!!getBoolean(STORAGE_KEY + permission));
 
 export enum PermissionStatus {
     GRANTED = 'authorized',
@@ -93,7 +93,7 @@ namespace PermissionsAndroid {
      * See https://facebook.github.io/react-native/docs/permissionsandroid.html#check
      */
     export function check(permission: string) {
-        const context: android.content.Context = application.android.foregroundActivity || application.android.startActivity;
+        const context: android.content.Context = androidApp.foregroundActivity || androidApp.startActivity;
         if (android.os.Build.VERSION.SDK_INT < 23) {
             return Promise.resolve(context.checkPermission(permission, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED);
         }
@@ -136,7 +136,7 @@ namespace PermissionsAndroid {
 
 let mRequestCode = 0;
 function requestPermission(permission: string): Promise<PermissionStatus> {
-    const activity: android.app.Activity = application.android.foregroundActivity || application.android.startActivity;
+    const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
     if (android.os.Build.VERSION.SDK_INT < 23) {
         return Promise.resolve(
             activity.checkPermission(permission, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -152,7 +152,7 @@ function requestPermission(permission: string): Promise<PermissionStatus> {
         try {
             const requestCode = mRequestCode++;
             activity.requestPermissions([permission], requestCode);
-            application.android.on(application.AndroidApplication.activityRequestPermissionsEvent, (args: application.AndroidActivityRequestPermissionsEventData) => {
+            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
                     if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
                         resolve(PermissionStatus.GRANTED);
@@ -176,7 +176,7 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
     const permissionsToCheck = [];
     let checkedPermissionsCount = 0;
 
-    const context: android.content.Context = application.android.foregroundActivity || application.android.startActivity;
+    const context: android.content.Context = androidApp.foregroundActivity || androidApp.startActivity;
 
     for (let i = 0; i < permissions.length; i++) {
         const perm = permissions[i];
@@ -198,12 +198,12 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
         return Promise.resolve(grantedPermissions);
     }
 
-    const activity: android.app.Activity = application.android.foregroundActivity || application.android.startActivity;
+    const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
     return new Promise((resolve, reject) => {
         try {
             const requestCode = mRequestCode++;
             activity.requestPermissions(permissionsToCheck, requestCode);
-            application.android.on(application.AndroidApplication.activityRequestPermissionsEvent, (args: application.AndroidActivityRequestPermissionsEventData) => {
+            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
                     const results = args.grantResults;
                     for (let j = 0; j < permissionsToCheck.length; j++) {
@@ -241,7 +241,7 @@ function shouldShowRequestPermissionRationale(permission: string) {
     if (android.os.Build.VERSION.SDK_INT < 23) {
         return Promise.resolve(false);
     }
-    const activity: android.app.Activity = application.android.foregroundActivity || application.android.startActivity;
+    const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
     try {
         return Promise.resolve(activity.shouldShowRequestPermissionRationale(permission));
     } catch (e) {
@@ -263,8 +263,8 @@ export function getTypes() {
 
 export function check(permission: string, options?: CheckOptions): Promise<[Status, boolean]> {
     if (!permissionTypes[permission]) {
-        console.warn(`nativescript-perms: ${permission} is not a valid permission type on Android`);
-        // const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
+        console.warn(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
+        // const error = new Error(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
 
         return Promise.resolve(['authorized', true]);
     }
@@ -287,7 +287,7 @@ export function check(permission: string, options?: CheckOptions): Promise<[Stat
 export function request(permission: string, options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
     const types = permissionTypes[permission];
     if (!types) {
-        const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
+        const error = new Error(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
 
         return Promise.reject(error);
     }

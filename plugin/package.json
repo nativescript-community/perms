@@ -1,5 +1,5 @@
 {
-    "name": "nativescript-perms",
+    "name": "@nativescript-community/perms",
     "version": "2.0.11",
     "description": "Nativescript Permissions plugin.",
     "main": "./permissions",
@@ -22,9 +22,9 @@
         "email": "martin@akylas.fr"
     },
     "bugs": {
-        "url": "https://github.com/farfromrefug/nativescript-perms/issues"
+        "url": "https://github.com/nativescript-community/perms/issues"
     },
     "license": "Apache-2.0",
-    "homepage": "https://github.com/farfromrefug/nativescript-perms",
+    "homepage": "https://github.com/nativescript-community/perms",
     "readmeFilename": "README.md"
 }

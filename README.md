@@ -1,13 +1,13 @@
-[![npm](https://img.shields.io/npm/v/nativescript-perms.svg)](https://www.npmjs.com/package/nativescript-perms)
-[![npm](https://img.shields.io/npm/dt/nativescript-perms.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-perms)
-[![GitHub forks](https://img.shields.io/github/forks/Akylas/nativescript-perms.svg)](https://github.com/Akylas/nativescript-perms/network)
-[![GitHub stars](https://img.shields.io/github/stars/Akylas/nativescript-perms.svg)](https://github.com/Akylas/nativescript-perms/stargazers)
+[![npm](https://img.shields.io/npm/v/@nativescript-community/perms.svg)](https://www.npmjs.com/package/@nativescript-community/perms)
+[![npm](https://img.shields.io/npm/dt/@nativescript-community/perms.svg?label=npm%20downloads)](https://www.npmjs.com/package/@nativescript-community/perms)
+[![GitHub forks](https://img.shields.io/github/forks/nativescript-community/perms.svg)](https://github.com/nativescript-community/perms/network)
+[![GitHub stars](https://img.shields.io/github/stars/nativescript-community/perms.svg)](https://github.com/nativescript-community/perms/stargazers)
 
-[![NPM](https://nodei.co/npm/nativescript-perms.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/nativescript-perms/)
+[![NPM](https://nodei.co/npm/@nativescript-community/perms.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/@nativescript-community/perms/)
 
 ## Installation
 
-* `tns plugin add nativescript-perms`
+* `tns plugin add @nativescript-community/perms`
 
 Be sure to run a new build after adding plugins to avoid any issues.
 

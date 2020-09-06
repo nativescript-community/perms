@@ -1,10 +1,9 @@
 {
-    "name": "nativescript-perms",
+    "name": "@nativescript-community/perms",
     "version": "1.0.0",
     "scripts": {
         "tsc": "cp src/permissions.d.ts plugin && tsc -skipLibCheck -d",
-        "build": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc && npm run build.esm",
-        "build.esm": "tsc -skipLibCheck --target es2017 --module esnext --removeComments --outDir build/esm && node ./build.esm.js",
+        "build": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc ",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
@@ -17,34 +16,33 @@
         "commitmsg": "commitlint -e $GIT_PARAMS"
     },
     "devDependencies": {
-        "@commitlint/cli": "^9.0.0",
-        "@commitlint/config-conventional": "^9.0.0",
-        "@nativescript/core": "6.5.1",
-        "@types/node": "^14.0.4",
+        "@commitlint/cli": "^9.1.2",
+        "@commitlint/config-conventional": "^9.1.2",
+        "@nativescript/core": "7.0.0",
+        "@nativescript/types-android": "7.0.2",
+        "@nativescript/types-ios": "7.0.1",
+        "@types/node": "^14.6.4",
+        "@typescript-eslint/eslint-plugin": "4.0.1",
+        "@typescript-eslint/parser": "4.0.1",
+        "eslint": "7.8.1",
         "husky": "^4.2.5",
-        "lerna": "^3.21.0",
-        "npm-watch": "^0.6.0",
+        "lerna": "^3.22.1",
+        "npm-watch": "^0.7.0",
         "prompt": "^1.0.0",
-        "recursive-copy": "^2.0.10",
         "rimraf": "^3.0.2",
-        "through2": "^3.0.1",
-        "tns-platform-declarations": "^6.5.1",
-        "tslib": "^2.0.0",
-        "tslint": "^6.1.2",
-        "tslint-config-prettier": "^1.18.0",
-        "tslint-config-standard": "^9.0.0",
-        "typescript": "~3.9.3"
+        "tslib": "^2.0.1",
+        "typescript": "~3.9.7"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/farfromrefug/nativescript-perms.git"
+        "url": "git+https://github.com/nativescript-community/perms.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/farfromrefug/nativescript-perms/issues"
+        "url": "https://github.com/nativescript-community/perms/issues"
     },
-    "homepage": "https://github.com/farfromrefug/nativescript-perms#readme",
+    "homepage": "https://github.com/nativescript-community/perms#readme",
     "commitlint": {
         "extends": [
             "@commitlint/config-conventional"

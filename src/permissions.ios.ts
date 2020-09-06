@@ -140,7 +140,7 @@ export namespace PermissionsIOS {
                 // if (CLLocationManager.authorizationStatus() === CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse && type === 'always') {
                 //     return Promise.resolve(Status.Denied);
                 // } else {
-                    return Promise.resolve(status);
+                return Promise.resolve(status);
                 // }
             }
         }
@@ -547,7 +547,7 @@ export namespace PermissionsIOS {
     }
     export function getPermissionStatus(type, json): Promise<[Status, boolean]> {
         let status: [Status, boolean];
-        CLog(CLogTypes.info, `nativescript-perms: getPermissionStatus ${type} ${json}`);
+        CLog(CLogTypes.info, `@nativescript-community/perms: getPermissionStatus ${type} ${json}`);
 
         switch (type) {
             case NSType.Location: {
@@ -598,7 +598,7 @@ export namespace PermissionsIOS {
         return Promise.resolve(status);
     }
     export function requestPermission(type, json): Promise<[Status, boolean]> {
-        CLog(CLogTypes.info, `nativescript-perms: requestPermission ${type} ${json}`);
+        CLog(CLogTypes.info, `@nativescript-community/perms: requestPermission ${type} ${json}`);
         switch (type) {
             case NSType.Location:
                 return NSPLocation.request(json);
@@ -661,13 +661,13 @@ export function getTypes() {
 }
 
 export function check(permission: string, options?: CheckOptions): Promise<[PermissionsIOS.Status, boolean]> {
-    CLog(CLogTypes.info, `nativescript-perms: check ${permission} ${options}`);
+    CLog(CLogTypes.info, `@nativescript-community/perms: check ${permission} ${options}`);
     if (permissionTypes.indexOf(permission) === -1) {
         // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
 
         // return Promise.reject(error);
-        CLog(CLogTypes.warning, `nativescript-perms: ${permission} is not a valid permission type on iOS`);
-        // const error = new Error(`nativescript-perms: ${permission} is not a valid permission type on Android`);
+        CLog(CLogTypes.warning, `@nativescript-community/perms: ${permission} is not a valid permission type on iOS`);
+        // const error = new Error(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
 
         return Promise.resolve([PermissionsIOS.Status.Authorized, true]);
     }
@@ -684,16 +684,16 @@ export function check(permission: string, options?: CheckOptions): Promise<[Perm
 }
 
 export function request(permission: string, options?: RequestOptions): Promise<[PermissionsIOS.Status, boolean]> {
-    CLog(CLogTypes.info, `nativescript-perms: request ${permission} ${options}`);
+    CLog(CLogTypes.info, `@nativescript-community/perms: request ${permission} ${options}`);
     if (permissionTypes.indexOf(permission) === -1) {
         // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
-        CLog(CLogTypes.warning, `nativescript-perms: ${permission} is not a valid permission type on iOS`);
+        CLog(CLogTypes.warning, `@nativescript-community/perms: ${permission} is not a valid permission type on iOS`);
 
         return Promise.resolve([PermissionsIOS.Status.Authorized, true]);
     }
 
     if (permission === 'backgroundRefresh') {
-        const error = new Error('nativescript-perms: You cannot request backgroundRefresh');
+        const error = new Error('@nativescript-community/perms: You cannot request backgroundRefresh');
 
         return Promise.reject(error);
     }
