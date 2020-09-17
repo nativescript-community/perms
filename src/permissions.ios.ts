@@ -40,6 +40,7 @@ export namespace PermissionsIOS {
         let locationManager: CLLocationManager;
         let locationManagerDelegate: CLLocationManagerDelegateImpl;
         export type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
+        @NativeClass
         export class CLLocationManagerDelegateImpl extends NSObject implements CLLocationManagerDelegate {
             public static ObjCProtocols = [CLLocationManagerDelegate];
 
@@ -165,6 +166,7 @@ export namespace PermissionsIOS {
             return [status, true];
         }
         export type SubCBPeripheralManagerDelegate = Partial<CBPeripheralManagerDelegate>;
+        @NativeClass
         export class CBPeripheralManagerDelegateImpl extends NSObject implements CBPeripheralManagerDelegate {
             public static ObjCProtocols = [CBPeripheralManagerDelegate];
 
