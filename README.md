@@ -1,7 +1,7 @@
 [![npm](https://img.shields.io/npm/v/@nativescript-community/perms.svg)](https://www.npmjs.com/package/@nativescript-community/perms)
 [![npm](https://img.shields.io/npm/dt/@nativescript-community/perms.svg?label=npm%20downloads)](https://www.npmjs.com/package/@nativescript-community/perms)
-[![GitHub forks](https://img.shields.io/github/forks/nativescript-community/perms.svg)](https://github.com/nativescript-community/perms/network)
-[![GitHub stars](https://img.shields.io/github/stars/nativescript-community/perms.svg)](https://github.com/nativescript-community/perms/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/nativescript-community/nativescript-perms.svg)](https://github.com/nativescript-community/nativescript-perms/network)
+[![GitHub stars](https://img.shields.io/github/stars/nativescript-community/nativescript-perms.svg)](https://github.com/nativescript-community/nativescript-perms/stargazers)
 
 [![NPM](https://nodei.co/npm/@nativescript-community/perms.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/@nativescript-community/perms/)
 
@@ -76,16 +76,18 @@ The current supported permissions are:
 * If you are not requesting mediaLibrary then you can remove MediaPlayer.framework from the xcode project
 
 ```js
+import { check as checkPermission, request as requestPermission } from '@nativescript-community/perms';
+
 // example
-Permissions.check('location', { type: 'always' }).then(response => {
+checkPermission('location', { type: 'always' }).then(response => {
   this.setState({ locationPermission: response[0] })
 })
 
-Permissions.request('location', { type: 'always' }).then(response => {
+requestPermission('location', { type: 'always' }).then(response => {
   this.setState({ locationPermission: response[0] })
 })
 
-Permissions.request('notification', { type: ['alert', 'badge'] }).then(
+requestPermission('notification', { type: ['alert', 'badge'] }).then(
   response => {
     this.setState({ notificationPermission: response[0] })
   },
