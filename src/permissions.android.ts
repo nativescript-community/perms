@@ -1,14 +1,27 @@
 import { Trace } from '@nativescript/core';
 import {AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp} from '@nativescript/core/application';
 import {getBoolean, setBoolean} from '@nativescript/core/application-settings';
-import { CheckOptions, Rationale, RequestOptions, Status } from './permissions';
+import { CheckOptions, Permissions as PermissionsType, Rationale, RequestOptions, Status } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 
 export * from './permissions.common';
 
+let ANDROID_SDK = -1;
+function getAndroidSDK() {
+    if (ANDROID_SDK === -1) {
+        ANDROID_SDK = android.os.Build.VERSION.SDK_INT;
+    }
+    return ANDROID_SDK;
+}
+
+const JELLY_BEAN = 18;
+const LOLLIPOP = 21;
+const MARSHMALLOW = 23;
+const ANDROIDQ = 29;
+
 export const permissionTypes = {
     get location() {
-        return android.Manifest.permission.ACCESS_FINE_LOCATION;
+        return [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION];
     },
     get camera() {
         return android.Manifest.permission.CAMERA;
@@ -55,32 +68,32 @@ namespace PermissionsAndroid {
     /**
      * A list of specified "dangerous" permissions that require prompting the user
      */
-    export const PERMISSIONS = {
-        READ_CALENDAR: 'android.permission.READ_CALENDAR',
-        WRITE_CALENDAR: 'android.permission.WRITE_CALENDAR',
-        CAMERA: 'android.permission.CAMERA',
-        READ_CONTACTS: 'android.permission.READ_CONTACTS',
-        WRITE_CONTACTS: 'android.permission.WRITE_CONTACTS',
-        GET_ACCOUNTS: 'android.permission.GET_ACCOUNTS',
-        ACCESS_FINE_LOCATION: 'android.permission.ACCESS_FINE_LOCATION',
-        ACCESS_COARSE_LOCATION: 'android.permission.ACCESS_COARSE_LOCATION',
-        RECORD_AUDIO: 'android.permission.RECORD_AUDIO',
-        READ_PHONE_STATE: 'android.permission.READ_PHONE_STATE',
-        CALL_PHONE: 'android.permission.CALL_PHONE',
-        READ_CALL_LOG: 'android.permission.READ_CALL_LOG',
-        WRITE_CALL_LOG: 'android.permission.WRITE_CALL_LOG',
-        ADD_VOICEMAIL: 'com.android.voicemail.permission.ADD_VOICEMAIL',
-        USE_SIP: 'android.permission.USE_SIP',
-        PROCESS_OUTGOING_CALLS: 'android.permission.PROCESS_OUTGOING_CALLS',
-        BODY_SENSORS: 'android.permission.BODY_SENSORS',
-        SEND_SMS: 'android.permission.SEND_SMS',
-        RECEIVE_SMS: 'android.permission.RECEIVE_SMS',
-        READ_SMS: 'android.permission.READ_SMS',
-        RECEIVE_WAP_PUSH: 'android.permission.RECEIVE_WAP_PUSH',
-        RECEIVE_MMS: 'android.permission.RECEIVE_MMS',
-        READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
-        WRITE_EXTERNAL_STORAGE: 'android.permission.WRITE_EXTERNAL_STORAGE'
-    };
+    // export const PERMISSIONS = {
+    //     READ_CALENDAR: 'android.permission.READ_CALENDAR',
+    //     WRITE_CALENDAR: 'android.permission.WRITE_CALENDAR',
+    //     CAMERA: 'android.permission.CAMERA',
+    //     READ_CONTACTS: 'android.permission.READ_CONTACTS',
+    //     WRITE_CONTACTS: 'android.permission.WRITE_CONTACTS',
+    //     GET_ACCOUNTS: 'android.permission.GET_ACCOUNTS',
+    //     ACCESS_FINE_LOCATION: 'android.permission.ACCESS_FINE_LOCATION',
+    //     ACCESS_COARSE_LOCATION: 'android.permission.ACCESS_COARSE_LOCATION',
+    //     RECORD_AUDIO: 'android.permission.RECORD_AUDIO',
+    //     READ_PHONE_STATE: 'android.permission.READ_PHONE_STATE',
+    //     CALL_PHONE: 'android.permission.CALL_PHONE',
+    //     READ_CALL_LOG: 'android.permission.READ_CALL_LOG',
+    //     WRITE_CALL_LOG: 'android.permission.WRITE_CALL_LOG',
+    //     ADD_VOICEMAIL: 'com.android.voicemail.permission.ADD_VOICEMAIL',
+    //     USE_SIP: 'android.permission.USE_SIP',
+    //     PROCESS_OUTGOING_CALLS: 'android.permission.PROCESS_OUTGOING_CALLS',
+    //     BODY_SENSORS: 'android.permission.BODY_SENSORS',
+    //     SEND_SMS: 'android.permission.SEND_SMS',
+    //     RECEIVE_SMS: 'android.permission.RECEIVE_SMS',
+    //     READ_SMS: 'android.permission.READ_SMS',
+    //     RECEIVE_WAP_PUSH: 'android.permission.RECEIVE_WAP_PUSH',
+    //     RECEIVE_MMS: 'android.permission.RECEIVE_MMS',
+    //     READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
+    //     WRITE_EXTERNAL_STORAGE: 'android.permission.WRITE_EXTERNAL_STORAGE'
+    // };
 
     export const RESULTS = {
         GRANTED: 'authorized',
@@ -94,12 +107,19 @@ namespace PermissionsAndroid {
      *
      * See https://facebook.github.io/react-native/docs/permissionsandroid.html#check
      */
-    export function check(permission: string) {
+    export async function check(permission: string | string[]) {
         const context: android.content.Context = androidApp.foregroundActivity || androidApp.startActivity;
-        if (android.os.Build.VERSION.SDK_INT < 23) {
-            return Promise.resolve(context.checkPermission(permission, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED);
+        let result =true;
+        const granted = android.content.pm.PackageManager.PERMISSION_GRANTED;
+        if (!Array.isArray(permission)) {
+            permission = [permission];
         }
-        return Promise.resolve(context.checkSelfPermission(permission) === android.content.pm.PackageManager.PERMISSION_GRANTED);
+        if (getAndroidSDK() < MARSHMALLOW) {
+            permission.forEach(p=>result = result && context.checkPermission(p, android.os.Process.myPid(), android.os.Process.myUid()) === granted);
+        } else {
+            permission.forEach(p=>result = result && context.checkSelfPermission(p) === granted);
+        }
+        return (result);
     }
 
     /**
@@ -139,7 +159,7 @@ namespace PermissionsAndroid {
 let mRequestCode = 0;
 function requestPermission(permission: string): Promise<PermissionStatus> {
     const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
-    if (android.os.Build.VERSION.SDK_INT < 23) {
+    if (getAndroidSDK() < MARSHMALLOW) {
         return Promise.resolve(
             activity.checkPermission(permission, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED
                 ? PermissionStatus.GRANTED
@@ -173,11 +193,10 @@ function requestPermission(permission: string): Promise<PermissionStatus> {
     });
 }
 
-function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: [Status, boolean] }> {
+async function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: [Status, boolean] }> {
     const grantedPermissions = {};
     const permissionsToCheck = [];
     let checkedPermissionsCount = 0;
-
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'requestMultiplePermissions', permissions);
     }
@@ -186,7 +205,7 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
     for (let i = 0; i < permissions.length; i++) {
         const perm = permissions[i];
 
-        if (android.os.Build.VERSION.SDK_INT < 23) {
+        if (getAndroidSDK() < MARSHMALLOW) {
             grantedPermissions[perm] =
                 context.checkPermission(perm, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED
                     ? PermissionStatus.GRANTED
@@ -199,20 +218,14 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
             permissionsToCheck.push(perm);
         }
     }
-    if (Trace.isEnabled()) {
-        CLog(CLogTypes.info, 'requestMultiplePermissions2', checkedPermissionsCount, grantedPermissions);
-    }
     if (permissions.length === checkedPermissionsCount) {
-        return Promise.resolve(grantedPermissions);
+        return (grantedPermissions);
     }
-
     const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
     return new Promise((resolve, reject) => {
         try {
             const requestCode = mRequestCode++;
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'requestMultiplePermissions3', permissionsToCheck, requestCode);
-            }
+            
             activity.requestPermissions(permissionsToCheck, requestCode);
             androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
@@ -249,7 +262,7 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
 }
 
 function shouldShowRequestPermissionRationale(permission: string) {
-    if (android.os.Build.VERSION.SDK_INT < 23) {
+    if (getAndroidSDK() < MARSHMALLOW) {
         return Promise.resolve(false);
     }
     const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
@@ -272,35 +285,61 @@ export function getTypes() {
     return Object.keys(permissionTypes);
 }
 
-export function check(permission: string, options?: CheckOptions): Promise<[Status, boolean]> {
-    if (!permissionTypes[permission]) {
-        console.warn(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
-        // const error = new Error(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
+export async function check(permission: PermissionsType, options?: CheckOptions): Promise<[Status, boolean]> {
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'check', permission, options);
+    }
+    const perms = permissionTypes[permission];
+    if (!perms) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
+        }
+        return ['authorized', true];
+    }
+
+
+    const isAuthorized = await PermissionsAndroid.check(perms);
+    if (isAuthorized) {
+        if (getAndroidSDK() >= ANDROIDQ && permission === 'location') {
+            const type = typeof options === 'string' ? options : options && options.type;
+            if (type === 'always') {
+                const backAuthorized = await PermissionsAndroid.check(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                return (['authorized', backAuthorized]);
+            }
+        }
+        return (['authorized', true]);
+    }
+
+    return getDidAskOnce(permission).then(didAsk => {
+        if (didAsk) {
+            return shouldShowRequestPermissionRationale(perms).then(shouldShow => [shouldShow ? 'denied' : 'restricted', true]);
+        }
+
+        return (['undetermined', true]);
+    });
+}
+
+export function request(permission: PermissionsType, options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'request', permission, options);
+    }
+    let types = permissionTypes[permission];
+    if (!types) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
+        }
 
         return Promise.resolve(['authorized', true]);
     }
 
-    return PermissionsAndroid.check(permissionTypes[permission]).then(isAuthorized => {
-        if (isAuthorized) {
-            return Promise.resolve(['authorized', true]);
-        }
-
-        return getDidAskOnce(permission).then(didAsk => {
-            if (didAsk) {
-                return shouldShowRequestPermissionRationale(permissionTypes[permission]).then(shouldShow => [shouldShow ? 'denied' : 'restricted', true]);
+    if (getAndroidSDK() >= ANDROIDQ) {
+        const type = typeof options === 'string' ? options : options && options.type;
+        if (permission === 'location' && type === 'always') {
+            if (!Array.isArray (types)) {
+                types = [types];
             }
-
-            return Promise.resolve(['undetermined', true]);
-        });
-    });
-}
-
-export function request(permission: string, options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
-    const types = permissionTypes[permission];
-    if (!types) {
-        const error = new Error(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
-
-        return Promise.reject(error);
+            types.push(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        }
     }
 
     const rationale = typeof options === 'string' ? undefined : options && options.rationale;
@@ -318,7 +357,7 @@ export function request(permission: string, options?: RequestOptions): Promise<[
     });
 }
 
-export function checkMultiple(permissions: string[]) {
+export function checkMultiple(permissions: PermissionsType[]) {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'checkMultiple', permissions);
     }
