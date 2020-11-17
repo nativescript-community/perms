@@ -1,4 +1,4 @@
-
+import {Permissions, check, request} from '@nativescript-community/perms';
 export default {
     name: 'Home',
     template: `
@@ -6,20 +6,38 @@ export default {
       <ActionBar title="Extendedinfo Demo">
       </ActionBar>
       <ListView ref="listView"
-          for="example in examples"
-          rowHeight="50"
+          for="perm in permissions"
+          rowHeight="70"
           @itemTap="goToExample">
         <v-template>
-          <StackLayout padding="10" class="item" orientation="horizontal">
-            <Label :text="example.component.name" fontSize="17" verticalAlignment="center"></Label>
-          </StackLayout>
+          <GridLayout  columns="*,auto,auto" padding="10" class="item" orientation="horizontal">
+            <Label :text="perm" fontSize="17" verticalAlignment="center"></Label>
+            <Button col="1" text="check" fontSize="17" verticalAlignment="center" @tap="checkPermission(perm)"/>
+            <Button col="2" text="request" fontSize="17" verticalAlignment="center" @tap="requestPermission(perm)"/>
+          </GridLayout>
         </v-template>
       </ListView>
     </Page>
     `,
     data() {
         return {
-            examples: getExamples()
+            permissions: ['location'
+                , 'camera'
+                , 'microphone'
+                , 'photo'
+                , 'contacts'
+                , 'event'
+                , 'reminder'
+                , 'bluetooth'
+                , 'notification'
+                , 'backgroundRefresh'
+                , 'speechRecognition'
+                , 'mediaLibrary'
+                , 'motion'
+                , 'storage'
+                , 'callPhone'
+                , 'readSms'
+                , 'receiveSms']
         };
     },
     mounted() {
@@ -38,8 +56,26 @@ export default {
         // };
     },
     methods: {
-        goToExample({ item }) {
-            this.$navigateTo(item.component);
+        async checkPermission(perm: Permissions) {
+            try {
+                console.log('checkPermission', perm);
+                const result = await check(perm, {type:'always'});
+                alert(JSON.stringify(result));
+            } catch(err) {
+                console.error(err);
+                alert(err);
+            }
+
+        },
+        async requestPermission(perm: Permissions) {
+            try {
+                console.log('requestPermission', perm);
+                const result = await request(perm, {type:'always'});
+                alert(JSON.stringify(result));
+            } catch(err) {
+                console.error(err);
+                alert(err);
+            }
         }
     }
 };
