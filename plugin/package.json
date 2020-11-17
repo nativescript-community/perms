@@ -1,6 +1,6 @@
 {
     "name": "@nativescript-community/perms",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "description": "Nativescript Permissions plugin.",
     "main": "./permissions",
     "sideEffects": false,

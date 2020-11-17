@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/nativescript-community/perms/compare/v2.1.1...v2.1.2) (2020-11-17)
+
+
+### Bug Fixes
+
+* android always type support for location ([4f1f521](https://github.com/nativescript-community/perms/commit/4f1f521))
+
+
+
+
+
 ## [2.1.1](https://github.com/nativescript-community/perms/compare/v2.1.0...v2.1.1) (2020-09-17)
 
 
