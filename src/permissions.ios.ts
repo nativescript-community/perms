@@ -1,3 +1,4 @@
+import { Trace } from '@nativescript/core';
 import { CheckOptions, RequestOptions } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 export * from './permissions.common';
@@ -30,7 +31,9 @@ export namespace PermissionsIOS {
                 default:
                     status = Status.Undetermined;
             }
-            CLog(CLogTypes.info, 'NSPLocation getStatusFromCLAuthorizationStatus', lStatus, type, status, always);
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'NSPLocation getStatusFromCLAuthorizationStatus', lStatus, type, status, always);
+            }
             return [status, always];
         }
         export function getStatusForType(type?: string): [Status, boolean] {
@@ -88,7 +91,9 @@ export namespace PermissionsIOS {
         }
         export function request(type): Promise<[Status, boolean]> {
             const status = getStatusForType(type);
-            CLog(CLogTypes.info, 'NSPLocation request', type, status);
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'NSPLocation request', type, status);
+            }
             if (status[0] === Status.Undetermined) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
@@ -100,7 +105,9 @@ export namespace PermissionsIOS {
                     }
                     const subD = {
                         locationManagerDidChangeAuthorizationStatus: (manager, status: CLAuthorizationStatus) => {
-                            CLog(CLogTypes.info, 'locationManagerDidChangeAuthorizationStatus', status);
+                            if (Trace.isEnabled()) {
+                                CLog(CLogTypes.info, 'locationManagerDidChangeAuthorizationStatus', status);
+                            }
                             if (status !== CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined) {
                                 if (locationManagerDelegate) {
                                     locationManagerDelegate.removeSubDelegate(subD);
@@ -119,7 +126,9 @@ export namespace PermissionsIOS {
                     };
                     locationManagerDelegate.addSubDelegate(subD);
                     try {
-                        CLog(CLogTypes.info, 'NSPLocation requestAuthorization', type);
+                        if (Trace.isEnabled()) {
+                            CLog(CLogTypes.info, 'NSPLocation requestAuthorization', type);
+                        }
                         if (type === 'always') {
                             locationManager.requestAlwaysAuthorization();
                         } else {
@@ -345,14 +354,18 @@ export namespace PermissionsIOS {
                 return new Promise(resolve => {
                     let activityManager = CMMotionActivityManager.new();
                     let motionActivityQueue = NSOperationQueue.new();
-                    CLog(CLogTypes.info, 'NSPMotion request', status);
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'NSPMotion request', status);
+                    }
                     activityManager.queryActivityStartingFromDateToDateToQueueWithHandler(NSDate.distantPast, new Date(), motionActivityQueue, (activities, error) => {
                         if (error) {
                             status = Status.Denied;
                         } else if (activities || !error) {
                             status = Status.Authorized;
                         }
-                        CLog(CLogTypes.info, 'NSPMotion got response', activities, error, status, getStatus());
+                        if (Trace.isEnabled()) {
+                            CLog(CLogTypes.info, 'NSPMotion got response', activities, error, status, getStatus());
+                        }
                         resolve([status, true]);
                         activityManager = null;
                         motionActivityQueue = null;
@@ -549,7 +562,9 @@ export namespace PermissionsIOS {
     }
     export function getPermissionStatus(type, json): Promise<[Status, boolean]> {
         let status: [Status, boolean];
-        CLog(CLogTypes.info, `@nativescript-community/perms: getPermissionStatus ${type} ${json}`);
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'getPermissionStatus', type, json);
+        }
 
         switch (type) {
             case NSType.Location: {
@@ -600,7 +615,9 @@ export namespace PermissionsIOS {
         return Promise.resolve(status);
     }
     export function requestPermission(type, json): Promise<[Status, boolean]> {
-        CLog(CLogTypes.info, `@nativescript-community/perms: requestPermission ${type} ${json}`);
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'requestPermission', type, json);
+        }
         switch (type) {
             case NSType.Location:
                 return NSPLocation.request(json);
@@ -663,13 +680,14 @@ export function getTypes() {
 }
 
 export function check(permission: string, options?: CheckOptions): Promise<[PermissionsIOS.Status, boolean]> {
-    CLog(CLogTypes.info, `@nativescript-community/perms: check ${permission} ${options}`);
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'check', permission, options);
+    }
     if (permissionTypes.indexOf(permission) === -1) {
-        // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
 
-        // return Promise.reject(error);
-        CLog(CLogTypes.warning, `@nativescript-community/perms: ${permission} is not a valid permission type on iOS`);
-        // const error = new Error(`@nativescript-community/perms: ${permission} is not a valid permission type on Android`);
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.warning, permission, 'is not a valid permission type on iOS');
+        }
 
         return Promise.resolve([PermissionsIOS.Status.Authorized, true]);
     }
@@ -686,10 +704,13 @@ export function check(permission: string, options?: CheckOptions): Promise<[Perm
 }
 
 export function request(permission: string, options?: RequestOptions): Promise<[PermissionsIOS.Status, boolean]> {
-    CLog(CLogTypes.info, `@nativescript-community/perms: request ${permission} ${options}`);
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'request', permission, options);
+    }
     if (permissionTypes.indexOf(permission) === -1) {
-        // const error = new Error(`ReactNativePermissions: ${permission} is not a valid permission type on iOS`);
-        CLog(CLogTypes.warning, `@nativescript-community/perms: ${permission} is not a valid permission type on iOS`);
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.warning, permission, 'is not a valid permission type on iOS');
+        }
 
         return Promise.resolve([PermissionsIOS.Status.Authorized, true]);
     }

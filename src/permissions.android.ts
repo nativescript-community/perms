@@ -1,6 +1,8 @@
+import { Trace } from '@nativescript/core';
 import {AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp} from '@nativescript/core/application';
 import {getBoolean, setBoolean} from '@nativescript/core/application-settings';
 import { CheckOptions, Rationale, RequestOptions, Status } from './permissions';
+import { CLog, CLogTypes } from './permissions.common';
 
 export * from './permissions.common';
 
@@ -176,6 +178,9 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
     const permissionsToCheck = [];
     let checkedPermissionsCount = 0;
 
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'requestMultiplePermissions', permissions);
+    }
     const context: android.content.Context = androidApp.foregroundActivity || androidApp.startActivity;
 
     for (let i = 0; i < permissions.length; i++) {
@@ -194,6 +199,9 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
             permissionsToCheck.push(perm);
         }
     }
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'requestMultiplePermissions2', checkedPermissionsCount, grantedPermissions);
+    }
     if (permissions.length === checkedPermissionsCount) {
         return Promise.resolve(grantedPermissions);
     }
@@ -202,6 +210,9 @@ function requestMultiplePermissions(permissions: string[]): Promise<{ [permissio
     return new Promise((resolve, reject) => {
         try {
             const requestCode = mRequestCode++;
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'requestMultiplePermissions3', permissionsToCheck, requestCode);
+            }
             activity.requestPermissions(permissionsToCheck, requestCode);
             androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
@@ -308,6 +319,9 @@ export function request(permission: string, options?: RequestOptions): Promise<[
 }
 
 export function checkMultiple(permissions: string[]) {
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'checkMultiple', permissions);
+    }
     return Promise.all(permissions.map(permission => this.check(permission))).then(result =>
         result.reduce((acc, value, index) => {
             const name = permissions[index];

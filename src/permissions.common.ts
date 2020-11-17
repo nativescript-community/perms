@@ -1,24 +1,13 @@
-let debug = false;
-export function setDebug(value: boolean) {
-    debug = value;
-}
+import { Trace } from '@nativescript/core';
+export const PermsTraceCategory = 'NativescriptPerms';
 
 export enum CLogTypes {
-    info,
-    warning,
-    error
+    log = Trace.messageType.log,
+    info = Trace.messageType.info,
+    warning = Trace.messageType.warn,
+    error = Trace.messageType.error,
 }
 
-export const CLog = (type: CLogTypes = 0, ...args) => {
-    if (debug) {
-        if (type === 0) {
-            // Info
-            console.log('[@nativescript-community/perms]', ...args);
-        } else if (type === 1) {
-            // Warning
-            console.warn('[@nativescript-community/perms]', ...args);
-        } else if (type === 2) {
-            console.error('[@nativescript-community/perms]', ...args);
-        }
-    }
+export const CLog = (type: CLogTypes, ...args) => {
+    Trace.write(args.map(a=>(a && typeof a === 'object'? JSON.stringify(a) :a)).join(' '), PermsTraceCategory, type);
 };

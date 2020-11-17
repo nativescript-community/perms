@@ -1,6 +1,6 @@
-export function setDebug(debug:boolean)
 
 export type Status = 'authorized' | 'denied' | 'restricted' | 'undetermined';
+export const PermsTraceCategory = 'NativescriptPerms';
 
 export type Permissions =
     | 'location'
