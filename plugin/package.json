@@ -1,7 +1,7 @@
 {
     "name": "@nativescript-community/perms",
     "version": "2.1.2",
-    "description": "Nativescript Permissions plugin.",
+    "description": "An unified permissions API for NativeScript on iOS and Android.",
     "main": "./permissions",
     "sideEffects": false,
     "typings": "./permissions.d.ts",
@@ -15,7 +15,8 @@
         "NativeScript",
         "JavaScript",
         "Android",
-        "iOS"
+        "iOS",
+        "Vue"
     ],
     "author": {
         "name": "Martin Guillon",
@@ -23,6 +24,10 @@
     },
     "bugs": {
         "url": "https://github.com/nativescript-community/perms/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nativescript-community/perms"
     },
     "license": "Apache-2.0",
     "homepage": "https://github.com/nativescript-community/perms",
