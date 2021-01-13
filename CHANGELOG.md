@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.5](https://github.com/nativescript-community/perms/compare/v2.1.4...v2.1.5) (2021-01-13)
+
+
+### Bug Fixes
+
+* **android:** reject permission request on “cancel” ([2f7661f](https://github.com/nativescript-community/perms/commit/2f7661f))
+
+
+
+
+
 ## [2.1.4](https://github.com/nativescript-community/perms/compare/v2.1.3...v2.1.4) (2020-11-23)
 
 **Note:** Version bump only for package @nativescript-community/perms
