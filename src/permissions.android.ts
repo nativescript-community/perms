@@ -176,14 +176,19 @@ function requestPermission(permission: string): Promise<PermissionStatus> {
             activity.requestPermissions([permission], requestCode);
             androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
-                    if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                        resolve(PermissionStatus.GRANTED);
-                    } else {
-                        if (activity.shouldShowRequestPermissionRationale(permission)) {
-                            resolve(PermissionStatus.DENIED);
+                    if (args.grantResults.length > 0) {
+                        if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                            resolve(PermissionStatus.GRANTED);
                         } else {
-                            resolve(PermissionStatus.NEVER_ASK_AGAIN);
+                            if (activity.shouldShowRequestPermissionRationale(permission)) {
+                                resolve(PermissionStatus.DENIED);
+                            } else {
+                                resolve(PermissionStatus.NEVER_ASK_AGAIN);
+                            }
                         }
+                    } else {
+                        // it is possible that the permissions request interaction with the user is interrupted. In this case you will receive empty permissions and results arrays which should be treated as a cancellation.
+                        reject();
                     }
                 }
             });
@@ -225,7 +230,7 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
     return new Promise((resolve, reject) => {
         try {
             const requestCode = mRequestCode++;
-            
+
             activity.requestPermissions(permissionsToCheck, requestCode);
             androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
