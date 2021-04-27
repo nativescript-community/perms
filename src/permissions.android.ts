@@ -266,12 +266,15 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
     });
 }
 
-function shouldShowRequestPermissionRationale(permission: string) {
+function shouldShowRequestPermissionRationale(permission: string | string[]) {
     if (getAndroidSDK() < MARSHMALLOW) {
         return Promise.resolve(false);
     }
     const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
     try {
+        if (Array.isArray(permission )) {
+            return Promise.resolve(permission.reduce((accu, p)=> accu && activity.shouldShowRequestPermissionRationale(p), true));
+        }
         return Promise.resolve(activity.shouldShowRequestPermissionRationale(permission));
     } catch (e) {
         return Promise.reject(e);
@@ -294,7 +297,7 @@ export async function check(permission: PermissionsType, options?: CheckOptions)
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'check', permission, options);
     }
-    const perms = permissionTypes[permission];
+    const perms: string | string[] = permissionTypes[permission];
     if (!perms) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
