@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.6](https://github.com/nativescript-community/perms/compare/v2.1.5...v2.1.6) (2021-04-27)
+
+**Note:** Version bump only for package @nativescript-community/perms
+
+
+
+
+
 ## [2.1.5](https://github.com/nativescript-community/perms/compare/v2.1.4...v2.1.5) (2021-01-13)
 
 **Note:** Version bump only for package @nativescript-community/perms
