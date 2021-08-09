@@ -1,5 +1,4 @@
-
-export type Status = 'authorized' | 'denied' | 'restricted' | 'undetermined';
+export type Status = 'authorized' | 'denied' | 'limited' | 'restricted' | 'undetermined';
 export const PermsTraceCategory = 'NativescriptPerms';
 
 export type Permissions =
