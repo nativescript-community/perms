@@ -308,7 +308,7 @@ export namespace PermissionsIOS {
         let status: Status = Status.Undetermined;
         export function getStatus(): [Status, boolean] {
             let photoStatus: PHAuthorizationStatus;
-            if (Device.sdkVersion >= '14.0') {
+            if (parseFloat(Device.osVersion) >= 14) {
                 photoStatus = PHPhotoLibrary.authorizationStatusForAccessLevel(PHAccessLevel.ReadWrite);
             } else {
                 photoStatus = PHPhotoLibrary.authorizationStatus();
