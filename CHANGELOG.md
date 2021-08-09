@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.7](https://github.com/nativescript-community/perms/compare/v2.1.6...v2.1.7) (2021-08-09)
+
+
+### Features
+
+* **ios:** add ios14 limited photo access permission status ([83c0637](https://github.com/nativescript-community/perms/commit/83c063732342f0437e84c904ec026a5b9e87939d))
+
+
+
+
+
 ## [2.1.6](https://github.com/nativescript-community/perms/compare/v2.1.5...v2.1.6) (2021-04-27)
 
 
