@@ -1,4 +1,4 @@
-import { Trace } from '@nativescript/core';
+import { Device, Trace } from '@nativescript/core';
 import { CheckOptions, RequestOptions } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 export * from './permissions.common';
@@ -8,6 +8,7 @@ export namespace PermissionsIOS {
         Undetermined = 'undetermined',
         Denied = 'denied',
         Authorized = 'authorized',
+        Limited = 'limited',
         Restricted = 'restricted'
     }
     namespace NSPLocation {
@@ -306,7 +307,12 @@ export namespace PermissionsIOS {
     namespace NSPPhoto {
         let status: Status = Status.Undetermined;
         export function getStatus(): [Status, boolean] {
-            const photoStatus = PHPhotoLibrary.authorizationStatus();
+            let photoStatus: PHAuthorizationStatus;
+            if (Device.sdkVersion >= '14.0') {
+                photoStatus = PHPhotoLibrary.authorizationStatusForAccessLevel(PHAccessLevel.ReadWrite);
+            } else {
+                photoStatus = PHPhotoLibrary.authorizationStatus();
+            }
             switch (photoStatus) {
                 case PHAuthorizationStatus.Authorized:
                     status = Status.Authorized;
