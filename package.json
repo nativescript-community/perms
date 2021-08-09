@@ -12,7 +12,9 @@
         "plugin.watch.android": "npm i && npm-watch build.android",
         "plugin.watch.ios": "npm i && npm-watch build.ios",
         "plugin.watch": "npm run plugin.watch.tsc & npm run plugin.watch.android & npm run plugin.watch.ios",
-        "publish": "npm run build && lerna publish --create-release=github --force-publish",
+        "setup": "ts-patch install",
+        "prepare": "npm run setup",
+        "publish": "npm run setup && npm run build && lerna publish --create-release=github --force-publish",
         "commitmsg": "commitlint -e $GIT_PARAMS"
     },
     "devDependencies": {
@@ -31,6 +33,7 @@
         "npm-watch": "^0.11.0",
         "prompt": "^1.1.0",
         "rimraf": "^3.0.2",
+        "ts-patch": "^1.4.2",
         "tslib": "^2.3.0",
         "typescript": "~4.3.5"
     },
