@@ -653,6 +653,9 @@ export namespace PermissionsIOS {
                 if (typeStrings.indexOf('sound') !== -1) {
                     types = types | UIUserNotificationType.Sound;
                 }
+                if (typeStrings.indexOf('providesAppNotificationSettings') !== -1 && parseInt(Device.osVersion) >= 12) {
+                    types = types | UIUserNotificationType.ProvidesAppNotificationSettings;
+                }
                 return NSPNotification.request(types);
             case NSType.NSPTypeSpeechRecognition:
                 return NSPSpeechRecognition.request();
