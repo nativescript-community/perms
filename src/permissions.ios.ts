@@ -411,9 +411,15 @@ export namespace PermissionsIOS {
     namespace NSPNotification {
         let status: Status = Status.Undetermined;
         const NSPDidAskForNotification = 'NSPDidAskForNotification';
-        export function getStatus(): [Status, boolean] {
+        export async function getStatus(): Promise<[Status, boolean]> {
             const didAskForPermission = NSUserDefaults.standardUserDefaults.boolForKey(NSPDidAskForNotification);
-            const isEnabled = UIApplication.sharedApplication.currentUserNotificationSettings.types !== UIUserNotificationType.None;
+            let isEnabled = false;
+            const osVersion = parseFloat(Device.osVersion);
+            if (osVersion >= 10) {
+                isEnabled = await (new Promise<UNNotificationSettings>(resolve=>UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve) ))!== (UNAuthorizationOptionNone as any);
+            } else {
+                isEnabled = UIApplication.sharedApplication.currentUserNotificationSettings.types !== UIUserNotificationType.None;
+            }
 
             if (isEnabled) {
                 status = Status.Authorized;
@@ -423,23 +429,35 @@ export namespace PermissionsIOS {
             return [status, true];
         }
 
-        export function request(types: UIUserNotificationType): Promise<[Status, boolean]> {
+        export function request(types: UIUserNotificationType | UNAuthorizationOptions): Promise<[Status, boolean]> {
             const status = getStatus();
 
             if (status[0] === Status.Undetermined) {
-                return new Promise(resolve => {
+                return new Promise((resolve, reject) => {
                     const observer = function() {
                         resolve(getStatus());
                         NSNotificationCenter.defaultCenter.removeObserver(observer);
                     };
                     NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(UIApplicationDidBecomeActiveNotification, null, null, observer);
+                    const osVersion = parseFloat(Device.osVersion);
+                    if (osVersion >= 10) {
+                        UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError)=>{
+                            if (error) {
+                                reject(error);
+                            } else {
+                                UIApplication.sharedApplication.registerForRemoteNotifications();
+                                NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                                NSUserDefaults.standardUserDefaults.synchronize();
+                            }
+                        });
+                    } else {
+                        const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
+                        UIApplication.sharedApplication.registerUserNotificationSettings(settings);
+                        UIApplication.sharedApplication.registerForRemoteNotifications();
 
-                    const settings = UIUserNotificationSettings.settingsForTypesCategories(types, null);
-                    UIApplication.sharedApplication.registerUserNotificationSettings(settings);
-                    UIApplication.sharedApplication.registerForRemoteNotifications();
-
-                    NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                    NSUserDefaults.standardUserDefaults.synchronize();
+                        NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                        NSUserDefaults.standardUserDefaults.synchronize();
+                    }
                 });
             } else {
                 return Promise.resolve(status);
@@ -566,7 +584,7 @@ export namespace PermissionsIOS {
     export function canOpenSettings() {
         return Promise.resolve(UIApplicationOpenSettingsURLString !== null);
     }
-    export function getPermissionStatus(type, json): Promise<[Status, boolean]> {
+    export async function getPermissionStatus(type, json): Promise<[Status, boolean]> {
         let status: [Status, boolean];
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'getPermissionStatus', type, json);
@@ -600,7 +618,7 @@ export namespace PermissionsIOS {
                 status = NSPBluetooth.getStatus();
                 break;
             case NSType.Notification:
-                status = NSPNotification.getStatus();
+                status = await NSPNotification.getStatus();
                 break;
             case NSType.BackgroundRefresh:
                 status = NSPBackgroundRefresh.getStatus();
@@ -618,7 +636,7 @@ export namespace PermissionsIOS {
                 break;
         }
 
-        return Promise.resolve(status);
+        return (status);
     }
     export function requestPermission(type, json): Promise<[Status, boolean]> {
         if (Trace.isEnabled()) {
@@ -644,18 +662,32 @@ export namespace PermissionsIOS {
             case NSType.Notification:
                 let types: UIUserNotificationType;
                 const typeStrings: string[] = json;
-                if (typeStrings.indexOf('alert') !== -1) {
-                    types = types | UIUserNotificationType.Alert;
+                const osVersion = parseFloat(Device.osVersion);
+                if (osVersion >= 10) {
+                    if (typeStrings.indexOf('alert') !== -1) {
+                        types = types | UNAuthorizationOptions.Alert;
+                    }
+                    if (typeStrings.indexOf('badge') !== -1) {
+                        types = types | UNAuthorizationOptions.Badge;
+                    }
+                    if (typeStrings.indexOf('sound') !== -1) {
+                        types = types | UNAuthorizationOptions.Sound;
+                    }
+                    if (typeStrings.indexOf('providesAppNotificationSettings') !== -1 && parseFloat(Device.osVersion) >= 12) {
+                        types = types | UNAuthorizationOptions.ProvidesAppNotificationSettings;
+                    }
+                } else {
+                    if (typeStrings.indexOf('alert') !== -1) {
+                        types = types | UIUserNotificationType.Alert;
+                    }
+                    if (typeStrings.indexOf('badge') !== -1) {
+                        types = types | UIUserNotificationType.Badge;
+                    }
+                    if (typeStrings.indexOf('sound') !== -1) {
+                        types = types | UIUserNotificationType.Sound;
+                    }
                 }
-                if (typeStrings.indexOf('badge') !== -1) {
-                    types = types | UIUserNotificationType.Badge;
-                }
-                if (typeStrings.indexOf('sound') !== -1) {
-                    types = types | UIUserNotificationType.Sound;
-                }
-                if (typeStrings.indexOf('providesAppNotificationSettings') !== -1 && parseInt(Device.osVersion) >= 12) {
-                    types = types | UIUserNotificationType.ProvidesAppNotificationSettings;
-                }
+
                 return NSPNotification.request(types);
             case NSType.NSPTypeSpeechRecognition:
                 return NSPSpeechRecognition.request();
