@@ -74,6 +74,7 @@ The current supported permissions are:
 * Permission type `notification` accepts a second parameter for `request()`. The
   second parameter is an array with the desired alert types. Any combination of
   `alert`, `badge` and `sound` (default requests all three).
+* iOS 12+: The second parameter also takes this type inside of the array `providesAppNotificationSettings`.
 * If you are not requesting mediaLibrary then you can remove MediaPlayer.framework from the xcode project
 
 ```js
