@@ -1,0 +1,9 @@
+{
+    "uses": [
+        "android.Manifest.permission*:*",
+        "android.os:Build*",
+        "android.content.pm:PackageManager*",
+        "android.os:Process*",
+        "android:Manifest*"
+    ]
+}
