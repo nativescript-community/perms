@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/nativescript-community/perms/compare/v2.1.8...v2.2.0) (2021-10-21)
+
+
+### Bug Fixes
+
+* **ios:** handle new way of registering for notifcations on iOS >= 10 ([f66ed95](https://github.com/nativescript-community/perms/commit/f66ed956441a396b7dcfe9ceed105d05ac5d9967))
+
+
+### Features
+
+* **android:** native-api-usage ([8ff8972](https://github.com/nativescript-community/perms/commit/8ff897237dc5715d34aefd66a38da895ddf77965))
+* **ios:** add ios12 notification providesAppNotificationSettings ([551b225](https://github.com/nativescript-community/perms/commit/551b225d93cb63578301b11ec19635eae33bcb30))
+
+
+
+
+
 ## [2.1.8](https://github.com/nativescript-community/perms/compare/v2.1.7...v2.1.8) (2021-08-09)
 
 **Note:** Version bump only for package @nativescript-community/perms
