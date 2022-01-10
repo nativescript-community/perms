@@ -295,8 +295,9 @@ export function openSettings() {
             }
         };
         androidApp.on(AndroidApplication.activityResultEvent, onActivityResultHandler);
-        activity.startActivityForResult(new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS), 5140);
-
+        const intent = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(android.net.Uri.parse("package:" + activity.getPackageName()));
+        activity.startActivityForResult(intent, 5140);
     });
 }
 
