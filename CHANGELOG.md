@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/nativescript-community/perms/compare/v2.2.1...v2.2.2) (2022-01-10)
+
+
+### Bug Fixes
+
+* **android:** working `openSettings` ([ccafa5c](https://github.com/nativescript-community/perms/commit/ccafa5cf627bb147a341292d441a6d6f29c4f5bf))
+
+
+
+
+
 ## [2.2.1](https://github.com/nativescript-community/perms/compare/v2.2.0...v2.2.1) (2022-01-10)
 
 
