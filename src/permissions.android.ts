@@ -282,11 +282,22 @@ function shouldShowRequestPermissionRationale(permission: string | string[]) {
 }
 
 export function canOpenSettings() {
-    return Promise.resolve(false);
+    return Promise.resolve(true);
 }
 
 export function openSettings() {
-    return Promise.reject(new Error("'openSettings' is deprecated on android"));
+    const activity = androidApp.foregroundActivity || androidApp.startActivity;
+    return new Promise<void>((resolve, reject) => {
+        const onActivityResultHandler = (data) => {
+            if (data.requestCode === 5140) {
+                androidApp.off(AndroidApplication.activityResultEvent, onActivityResultHandler);
+                resolve();
+            }
+        };
+        androidApp.on(AndroidApplication.activityResultEvent, onActivityResultHandler);
+        activity.startActivityForResult(new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS), 5140);
+
+    });
 }
 
 export function getTypes() {
