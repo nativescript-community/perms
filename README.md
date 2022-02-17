@@ -80,10 +80,6 @@ The current supported permissions are:
 * iOS 12+: The second parameter also takes this type inside of the array `providesAppNotificationSettings`.
 * If you are not requesting mediaLibrary then you can remove MediaPlayer.framework from the xcode project
 
-### Android Notes
-
-* `check` and `request` also allows you to directly pass android permission(s) as a value or an array. This would allow to request any new permission without a required update of this plugin
-
 ```js
 import { check as checkPermission, request as requestPermission } from '@nativescript-community/perms';
 
@@ -154,28 +150,13 @@ You can find more information about this issue in #46.
 
 ### Android Notes
 
+* `check` and `request` also allows you to directly pass android permission(s) as a value or an array. This would allow to request any new permission without a required update of this plugin
 * All required permissions also need to be included in the `AndroidManifest.xml`
   file before they can be requested. Otherwise `request()` will immediately
   return `denied`.
 * You can request write access to any of these types by also including the
   appropriate write permission in the `AndroidManifest.xml` file. Read more
   [here](https://developer.android.com/guide/topics/security/permissions.html#normal-dangerous).
-
-* The optional rationale argument will show a dialog prompt.
-
-```ts
-// example
-Permissions.request('camera', {
-  rationale: {
-    title: 'Cool Photo App Camera Permission',
-    message:
-      'Cool Photo App needs access to your camera ' +
-      'so you can take awesome pictures.',
-  },
-}).then(response => {
-  this.setState({ cameraPermission: response[0] })
-})
-```
 
 * Permissions are automatically accepted for **targetSdkVersion < 23** but you
   can still use `check()` to check if the user has disabled them from Settings.
