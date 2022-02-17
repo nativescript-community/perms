@@ -1,6 +1,6 @@
 import { Trace } from '@nativescript/core';
-import {AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp} from '@nativescript/core/application';
-import {getBoolean, setBoolean} from '@nativescript/core/application-settings';
+import { AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp } from '@nativescript/core/application';
+import { getBoolean, setBoolean } from '@nativescript/core/application-settings';
 import { CheckOptions, Permissions as PermissionsType, Rationale, RequestOptions, Status } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 
@@ -15,9 +15,9 @@ function getAndroidSDK() {
 }
 
 const JELLY_BEAN = 18;
-const LOLLIPOP = 21;
 const MARSHMALLOW = 23;
 const ANDROIDQ = 29;
+const ANDROIDS = 31;
 
 export const permissionTypes = {
     get location() {
@@ -25,6 +25,12 @@ export const permissionTypes = {
     },
     get camera() {
         return android.Manifest.permission.CAMERA;
+    },
+    get mediaLocation() {
+        if (getAndroidSDK() >= ANDROIDQ) {
+            return android.Manifest.permission.ACCESS_MEDIA_LOCATION;
+        }
+        return null;
     },
     get microphone() {
         return android.Manifest.permission.RECORD_AUDIO;
@@ -49,6 +55,24 @@ export const permissionTypes = {
     },
     get receiveSms() {
         return android.Manifest.permission.RECEIVE_SMS;
+    },
+    get bluetoothScan() {
+        if (getAndroidSDK() >= ANDROIDS) {
+            return android.Manifest.permission.BLUETOOTH_SCAN;
+        }
+        return null;
+    },
+    get bluetoothConnect() {
+        if (getAndroidSDK() >= ANDROIDS) {
+            return android.Manifest.permission.BLUETOOTH_CONNECT;
+        }
+        return null;
+    },
+    get bluetooth() {
+        if (getAndroidSDK() >= ANDROIDS) {
+            return android.Manifest.permission.BLUETOOTH_ADVERTISE;
+        }
+        return null;
     }
 };
 
@@ -311,9 +335,9 @@ export async function check(permission: PermissionsType, options?: CheckOptions)
     }
     const perms: string | string[] = permissionTypes[permission];
     if (!perms) {
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
-        }
+        // if (Trace.isEnabled()) {
+        //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
+        // }
         return ['authorized', true];
     }
 
@@ -345,10 +369,9 @@ export function request(permission: PermissionsType, options?: RequestOptions): 
     }
     let types = permissionTypes[permission];
     if (!types) {
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
-        }
-
+        // if (Trace.isEnabled()) {
+        //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
+        // }
         return Promise.resolve(['authorized', true]);
     }
 
