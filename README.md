@@ -41,7 +41,7 @@ The current supported permissions are:
 | Photos             | `photo`             | ✔  | ✔       |
 | Contacts           | `contacts`          | ✔  | ✔       |
 | Events             | `event`             | ✔  | ✔       |
-| Bluetooth          | `bluetooth`         | ✔  | ❌      |
+| Bluetooth          | `bluetooth`         | ✔  | ✔(api >= 31)      |
 | Reminders          | `reminder`          | ✔  | ❌      |
 | Push Notifications | `notification`      | ✔  | ❌      |
 | Background Refresh | `backgroundRefresh` | ✔  | ❌      |
@@ -52,6 +52,9 @@ The current supported permissions are:
 | Phone Call         | `callPhone`         | ❌️ | ✔       |
 | Read SMS           | `readSms`           | ❌️ | ✔       |
 | Receive SMS        | `receiveSms`        | ❌️ | ✔       |
+| Media Location        | `mediaLocation`        | ❌️ | ✔(api >= 29)       |
+| Bluetooth Scan        | `bluetoothScan`        | ❌️ | ✔(api >= 31)       |
+| Bluetooth Connect        | `bluetoothConnect`        | ❌️ | ✔(api >= 31)       |
 
 ### Methods
 
@@ -76,6 +79,10 @@ The current supported permissions are:
   `alert`, `badge` and `sound` (default requests all three).
 * iOS 12+: The second parameter also takes this type inside of the array `providesAppNotificationSettings`.
 * If you are not requesting mediaLibrary then you can remove MediaPlayer.framework from the xcode project
+
+### Android Notes
+
+* `check` and `request` also allows you to directly pass android permission(s) as a value or an array. This would allow to request any new permission without a required update of this plugin
 
 ```js
 import { check as checkPermission, request as requestPermission } from '@nativescript-community/perms';
