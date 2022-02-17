@@ -86,7 +86,7 @@ function getNativePermissions(permission: NativePermissions, options?) {
             break;
         }
     }
-    return null;
+    return [];
 }
 
 
