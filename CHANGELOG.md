@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.3](https://github.com/nativescript-community/perms/compare/v2.2.2...v2.2.3) (2022-02-17)
+
+
+### Features
+
+* **android:** allow to pass android permission(s) directly ([1554882](https://github.com/nativescript-community/perms/commit/155488273f84de4354f5920907025c3c271703cb))
+* **android:** android 12 support: bluetooth(adv), bluetoothScan, bluetoothConnect, mediaLocation ([08245c1](https://github.com/nativescript-community/perms/commit/08245c1b20631d72c4eefee34d88665ea21a4d8f))
+
+
+
+
+
 ## [2.2.2](https://github.com/nativescript-community/perms/compare/v2.2.1...v2.2.2) (2022-01-10)
 
 
