@@ -5,22 +5,22 @@
     "repository": "http://www.github.com/nativescript-community/perms.git",
     "dependencies": {
         "@nativescript-community/perms": "file:../plugin",
-        "@nativescript/core": "^7.0.13",
-        "@nativescript/webpack": "3.0.0",
-        "nativescript-vue": "~2.8.1"
+        "@nativescript/core": "^8.1.5",
+        "@nativescript/webpack": "5.0.4",
+        "nativescript-vue": "~2.9.0"
     },
     "devDependencies": {
-        "@babel/core": "~7.3.4",
-        "@babel/preset-env": "~7.3.4",
-        "@nativescript/android": "7.0.1",
-        "@nativescript/types": "7.0.0",
-        "babel-loader": "~8.0.6",
-        "nativescript-vue-template-compiler": "~2.8.1",
-        "vue": "^2.6.7",
-        "vue-loader": "~15.6.4"
+        "@babel/core": "~7.17.4",
+        "@babel/preset-env": "~7.16.11",
+        "@nativescript/android": "8.2.0-alpha.11",
+        "@nativescript/types": "8.1.1",
+        "babel-loader": "~8.2.3",
+        "nativescript-vue-template-compiler": "~2.9.0",
+        "vue": "^2.6.14",
+        "vue-loader": "15.9.8"
     },
     "scripts": {
         "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
     },
-    "main": "main.js"
+    "main": "app/main"
 }

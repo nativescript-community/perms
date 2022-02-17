@@ -14,13 +14,6 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "@nativescript-community/perms": [
-                "../src"
-            ],
-            "*": [
-                "./node_modules/tns-core-modules/*",
-                "./node_modules/*"
-            ],
             "~/*": [
                 "app/*"
             ]
@@ -29,11 +22,9 @@
         "removeComments": false
     },
     "include": [
-        "**/*"
+        "app/**/*"
     ],
     "exclude": [
-        "../src/node_modules",
-        "../src/**/*.d.ts",
         "node_modules",
         "platforms"
     ]

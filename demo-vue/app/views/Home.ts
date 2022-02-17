@@ -29,12 +29,13 @@ export default {
                 , 'event'
                 , 'reminder'
                 , 'bluetooth'
+                , 'bluetoothScan'
                 , 'notification'
                 , 'backgroundRefresh'
                 , 'speechRecognition'
                 , 'mediaLibrary'
                 , 'motion'
-                , 'storage'
+                , [android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE]
                 , 'callPhone'
                 , 'readSms'
                 , 'receiveSms']
@@ -59,7 +60,7 @@ export default {
         async checkPermission(perm: Permissions) {
             try {
                 console.log('checkPermission', perm);
-                const result = await check(perm, {type:'always'});
+                const result = await check(perm, {type:'none'});
                 alert(JSON.stringify(result));
             } catch(err) {
                 console.error(err);
@@ -70,7 +71,7 @@ export default {
         async requestPermission(perm: Permissions) {
             try {
                 console.log('requestPermission', perm);
-                const result = await request(perm, {type:'always'});
+                const result = await request(perm, {type:'none'});
                 alert(JSON.stringify(result));
             } catch(err) {
                 console.error(err);
