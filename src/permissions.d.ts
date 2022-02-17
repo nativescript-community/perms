@@ -38,8 +38,8 @@ export function openSettings(): Promise<boolean>;
 
 export function getTypes(): Permissions[];
 
-export function check(permission: Permissions, options?: CheckOptions): Promise<[Status, boolean]>;
+export function check(permission: Permissions | string[], options?: CheckOptions): Promise<[Status, boolean]>;
 
-export function request(permission: Permissions, options?: RequestOptions): Promise<[Status, boolean]>;
+export function request(permission: Permissions | string[], options?: RequestOptions): Promise<[Status, boolean]>;
 
 export function checkMultiple(permissions: Permissions[]): Promise<{ [k: string]: string }>;

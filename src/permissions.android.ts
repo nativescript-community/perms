@@ -19,62 +19,76 @@ const MARSHMALLOW = 23;
 const ANDROIDQ = 29;
 const ANDROIDS = 31;
 
-export const permissionTypes = {
-    get location() {
-        return [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION];
-    },
-    get camera() {
-        return android.Manifest.permission.CAMERA;
-    },
-    get mediaLocation() {
-        if (getAndroidSDK() >= ANDROIDQ) {
-            return android.Manifest.permission.ACCESS_MEDIA_LOCATION;
+const NativePermissionsTypes: PermissionsType[] = ['location', 'camera', 'mediaLocation', 'microphone', 'contacts', 'event', 'storage', 'photo', 'callPhone', 'readSms', 'receiveSms', 'bluetoothScan', 'bluetoothConnect', 'bluetooth'];
+type NativePermissionsNames = typeof NativePermissionsTypes; // type Names = readonly ['Mike', 'Jeff', 'Ben']
+type NativePermissions = NativePermissionsNames[number];
+function getNativePermissions(permission: NativePermissions, options?) {
+    switch(permission) {
+        case 'location': {
+            const result = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION];
+            if (getAndroidSDK() >= ANDROIDQ) {
+                const type = typeof options === 'string' ? options : options && options.type;
+                if (type === 'always') {
+                    result.push(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                }
+            }
+            return result;
         }
-        return null;
-    },
-    get microphone() {
-        return android.Manifest.permission.RECORD_AUDIO;
-    },
-    get contacts() {
-        return android.Manifest.permission.READ_CONTACTS;
-    },
-    get event() {
-        return android.Manifest.permission.READ_CALENDAR;
-    },
-    get storage() {
-        return [android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE];
-    },
-    get photo() {
-        return android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    },
-    get callPhone() {
-        return android.Manifest.permission.CALL_PHONE;
-    },
-    get readSms() {
-        return android.Manifest.permission.READ_SMS;
-    },
-    get receiveSms() {
-        return android.Manifest.permission.RECEIVE_SMS;
-    },
-    get bluetoothScan() {
-        if (getAndroidSDK() >= ANDROIDS) {
-            return android.Manifest.permission.BLUETOOTH_SCAN;
+        case 'camera': {
+            return [android.Manifest.permission.CAMERA];
         }
-        return null;
-    },
-    get bluetoothConnect() {
-        if (getAndroidSDK() >= ANDROIDS) {
-            return android.Manifest.permission.BLUETOOTH_CONNECT;
+        case 'mediaLocation': {
+            if (getAndroidSDK() >= ANDROIDQ) {
+                return [android.Manifest.permission.ACCESS_MEDIA_LOCATION];
+            }
+            break;
         }
-        return null;
-    },
-    get bluetooth() {
-        if (getAndroidSDK() >= ANDROIDS) {
-            return android.Manifest.permission.BLUETOOTH_ADVERTISE;
+        case 'microphone': {
+            return [android.Manifest.permission.RECORD_AUDIO];
         }
-        return null;
+        case 'contacts': {
+            return [android.Manifest.permission.READ_CONTACTS];
+        }
+        case 'event': {
+            return [android.Manifest.permission.READ_CALENDAR];
+        }
+        case 'storage': {
+            return [android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE];
+        }
+        case 'photo': {
+            return [android.Manifest.permission.WRITE_EXTERNAL_STORAGE];
+        }
+        case 'callPhone': {
+            return [android.Manifest.permission.CALL_PHONE];
+        }
+        case 'readSms': {
+            return [android.Manifest.permission.READ_SMS];
+        }
+        case 'receiveSms': {
+            return [android.Manifest.permission.RECEIVE_SMS];
+        }
+        case 'bluetoothScan': {
+            if (getAndroidSDK() >= ANDROIDS) {
+                return [android.Manifest.permission.BLUETOOTH_SCAN];
+            }
+            break;
+        }
+        case 'bluetoothConnect': {
+            if (getAndroidSDK() >= ANDROIDS) {
+                return [android.Manifest.permission.BLUETOOTH_CONNECT];
+            }
+            break;
+        }
+        case 'bluetooth': {
+            if (getAndroidSDK() >= ANDROIDS) {
+                return [android.Manifest.permission.BLUETOOTH_ADVERTISE];
+            }
+            break;
+        }
     }
-};
+    return null;
+}
+
 
 const STORAGE_KEY = '@NSPermissions:didAskPermission:';
 
@@ -326,14 +340,14 @@ export function openSettings() {
 }
 
 export function getTypes() {
-    return Object.keys(permissionTypes);
+    return NativePermissionsTypes;
 }
 
 export async function check(permission: PermissionsType, options?: CheckOptions): Promise<[Status, boolean]> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'check', permission, options);
     }
-    const perms: string | string[] = permissionTypes[permission];
+    const perms: string | string[] = getNativePermissions(permission, options);
     if (!perms) {
         // if (Trace.isEnabled()) {
         //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
@@ -363,39 +377,42 @@ export async function check(permission: PermissionsType, options?: CheckOptions)
     });
 }
 
-export function request(permission: PermissionsType, options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
+export function request(permission: PermissionsType | string[], options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'request', permission, options);
     }
-    let types = permissionTypes[permission];
-    if (!types) {
+    let types: string[] = [];
+    if (Array.isArray(permission)) {
+        permission.forEach(s=>s.startsWith('android.permission.') && types.push(s));
+    } else {
+        if (permission.startsWith('android.permission.')) {
+            types.push(permission);
+        } else {
+            types = getNativePermissions(permission, options);
+        }
+    }
+    if (types.length === 0) {
         // if (Trace.isEnabled()) {
         //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
         // }
         return Promise.resolve(['authorized', true]);
     }
 
-    if (getAndroidSDK() >= ANDROIDQ) {
-        const type = typeof options === 'string' ? options : options && options.type;
-        if (permission === 'location' && type === 'always') {
-            if (!Array.isArray (types)) {
-                types = [types];
-            }
-            types.push(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-        }
-    }
 
     const rationale = typeof options === 'string' ? undefined : options && options.rationale;
-    if (Array.isArray(types)) {
+    if (types.length > 1) {
         return requestMultiplePermissions(types);
     }
-    return PermissionsAndroid.request(types, rationale).then(result => {
+    return PermissionsAndroid.request(types[0], rationale).then(result => {
         // PermissionsAndroid.request() to native module resolves to boolean
         // rather than string if running on OS version prior to Android M
         if (typeof result === 'boolean') {
             return [result ? 'authorized' : 'denied', true];
         }
 
+        if (Array.isArray(permission)) {
+            return Promise.all(permission.map(setDidAskOnce)).then(() => [result as Status, true]);
+        }
         return setDidAskOnce(permission).then(() => [result as Status, true]);
     });
 }
