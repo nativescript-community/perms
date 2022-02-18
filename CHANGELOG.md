@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.5](https://github.com/nativescript-community/perms/compare/v2.2.4...v2.2.5) (2022-02-18)
+
+
+### Features
+
+* support requesting multiple perms on both platforms ([a0bf946](https://github.com/nativescript-community/perms/commit/a0bf946c9621fe83a63f4b0a9f924b40898d8e56))
+
+
+
+
+
 ## [2.2.4](https://github.com/nativescript-community/perms/compare/v2.2.3...v2.2.4) (2022-02-17)
 
 
