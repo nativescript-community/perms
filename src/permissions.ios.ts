@@ -1,5 +1,5 @@
 import { Device, Trace } from '@nativescript/core';
-import { CheckOptions, RequestOptions } from './permissions';
+import { CheckOptions, Permissions as PermissionsType, RequestOptions } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 export * from './permissions.common';
 
@@ -554,7 +554,6 @@ export namespace PermissionsIOS {
     }
 
     export enum NSType {
-        Unknown,
         Location = 'location',
         Camera = 'camera',
         Microphone = 'microphone',
@@ -696,7 +695,7 @@ export namespace PermissionsIOS {
             case NSType.Motion:
                 return NSPMotion.request();
             default:
-                return Promise.reject(NSType.Unknown);
+                return Promise.reject('unknown');
         }
     }
 }
@@ -706,7 +705,8 @@ const DEFAULTS = {
     notification: ['alert', 'badge', 'sound']
 };
 
-const permissionTypes = Object.keys(PermissionsIOS.NSType).map(k => PermissionsIOS.NSType[k]) as string[];
+type IOSPermissionTypes = `${PermissionsIOS.NSType}`;
+const permissionTypes = Object.values(PermissionsIOS.NSType) as IOSPermissionTypes[];
 
 export function canOpenSettings() {
     return PermissionsIOS.canOpenSettings();
@@ -720,7 +720,11 @@ export function getTypes() {
     return permissionTypes;
 }
 
-export function check(permission: string, options?: CheckOptions): Promise<[PermissionsIOS.Status, boolean]> {
+type SingleResult = [PermissionsIOS.Status, boolean];
+interface MultipleResult { [k: string]: PermissionsIOS.Status }
+type Result<T> = T extends any[] ? MultipleResult : SingleResult;
+
+export async function check(permission: IOSPermissionTypes, options?: CheckOptions): Promise<SingleResult> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'check', permission, options);
     }
@@ -730,7 +734,7 @@ export function check(permission: string, options?: CheckOptions): Promise<[Perm
             CLog(CLogTypes.warning, permission, 'is not a valid permission type on iOS');
         }
 
-        return Promise.resolve([PermissionsIOS.Status.Authorized, true]);
+        return [PermissionsIOS.Status.Authorized, true];
     }
 
     let type;
@@ -744,22 +748,31 @@ export function check(permission: string, options?: CheckOptions): Promise<[Perm
     return PermissionsIOS.getPermissionStatus(permission, type || DEFAULTS[permission]);
 }
 
-export function request(permission: string, options?: RequestOptions): Promise<[PermissionsIOS.Status, boolean]> {
+export async function request<T extends IOSPermissionTypes | IOSPermissionTypes[]>(permission: T, options?: RequestOptions): Promise<Result<T>> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'request', permission, options);
+    }
+    if (Array.isArray(permission)) {
+        const grantedPermissions: Result<IOSPermissionTypes[]> = {};
+        for (let index = 0; index < permission.length; index++) {
+            const res = await request(permission[index] , options);
+            grantedPermissions[permission[index]] = res[0];
+        }
+        //@ts-ignore
+        return grantedPermissions ;
     }
     if (permissionTypes.indexOf(permission) === -1) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.warning, permission, 'is not a valid permission type on iOS');
         }
 
-        return Promise.resolve([PermissionsIOS.Status.Authorized, true]);
+        //@ts-ignore
+        return [PermissionsIOS.Status.Authorized, true] as Result<IOSPermissionTypes>;
     }
 
+    //@ts-ignore
     if (permission === 'backgroundRefresh') {
-        const error = new Error('@nativescript-community/perms: You cannot request backgroundRefresh');
-
-        return Promise.reject(error);
+        throw new Error('@nativescript-community/perms: You cannot request backgroundRefresh');
     }
 
     let type;
@@ -770,10 +783,11 @@ export function request(permission: string, options?: RequestOptions): Promise<[
         type = options.type;
     }
 
+    //@ts-ignore
     return PermissionsIOS.requestPermission(permission, type || DEFAULTS[permission]);
 }
 
-export function checkMultiple(permissions: string[]) {
+export function checkMultiple(permissions: PermissionsType[]) {
     return Promise.all(permissions.map(permission => this.check(permission))).then(result =>
         result.reduce((acc, value, index) => {
             const name = permissions[index];

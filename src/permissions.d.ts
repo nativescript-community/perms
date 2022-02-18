@@ -38,8 +38,10 @@ export function openSettings(): Promise<boolean>;
 
 export function getTypes(): Permissions[];
 
-export function check(permission: Permissions | string[], options?: CheckOptions): Promise<[Status, boolean]>;
+export type Result<T> = T extends any[] ? { [k: string]: Status } : [Status, boolean];
 
-export function request(permission: Permissions | string[], options?: RequestOptions): Promise<[Status, boolean]>;
+export function check<T = Permissions>(permission: T, options?: CheckOptions): Promise<Result<T>>;
 
-export function checkMultiple(permissions: Permissions[]): Promise<{ [k: string]: string }>;
+export function request<T = Permissions | Permissions[] | string[]>(permission: T, options?: RequestOptions): Promise<Result<T>>;
+
+export function checkMultiple<T = Permissions[]>(permissions: T): Promise<Result<T>>;

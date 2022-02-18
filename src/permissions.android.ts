@@ -187,7 +187,7 @@ namespace PermissionsAndroid {
      *
      * See https://facebook.github.io/react-native/docs/permissionsandroid.html#requestmultiple
      */
-    export function requestMultiple(permissions: string[]): Promise<{ [permission: string]: [Status, boolean] }> {
+    export function requestMultiple(permissions: string[]): Promise<{ [permission: string]: Status }> {
         return requestMultiplePermissions(permissions);
     }
 }
@@ -236,7 +236,7 @@ function requestPermission(permission: string): Promise<PermissionStatus> {
     });
 }
 
-async function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: [Status, boolean] }> {
+async function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: Status }> {
     const grantedPermissions = {};
     const permissionsToCheck = [];
     let checkedPermissionsCount = 0;
@@ -377,13 +377,19 @@ export async function check(permission: PermissionsType, options?: CheckOptions)
     });
 }
 
-export function request(permission: PermissionsType | string[], options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: [Status, boolean] }> {
+export function request(permission: PermissionsType | PermissionsType[] | string[], options?: RequestOptions): Promise<[Status, boolean] | { [permission: string]: Status }> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'request', permission, options);
     }
     let types: string[] = [];
     if (Array.isArray(permission)) {
-        permission.forEach(s=>s.startsWith('android.permission.') && types.push(s));
+        permission.forEach(s=>{
+            if (s.startsWith('android.permission.')) {
+                types.push(s);
+            } else {
+                types.push(...getNativePermissions(s as PermissionsType, options));
+            }
+        });
     } else {
         if (permission.startsWith('android.permission.')) {
             types.push(permission);
