@@ -25,10 +25,14 @@ type NativePermissions = NativePermissionsNames[number];
 function getNativePermissions(permission: NativePermissions, options?) {
     switch(permission) {
         case 'location': {
-            const result = [android.Manifest.permission.ACCESS_FINE_LOCATION];
+            const result = [];
             const coarse = options && options.coarse;
+            const precise = options && options.precise;
             if (coarse !== false) {
                 result.push(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+            if (precise !== false) {
+                result.push(android.Manifest.permission.ACCESS_FINE_LOCATION);
             }
             if (getAndroidSDK() >= ANDROIDQ) {
                 const type = typeof options === 'string' ? options : options && options.type;

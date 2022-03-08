@@ -34,6 +34,7 @@ export interface LocationOptions {
     [k: string]: any;
     type: string;
     coarce?: boolean;
+    precise?: boolean;
 }
 export interface StorageOptions {
     [k: string]: any;
