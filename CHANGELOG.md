@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.7](https://github.com/nativescript-community/perms/compare/v2.2.6...v2.2.7) (2022-03-08)
+
+
+### Bug Fixes
+
+* android location precise option ([3bdf6b8](https://github.com/nativescript-community/perms/commit/3bdf6b8489c78aaa8e9281ee5af1a4cd4415b74f))
+
+
+
+
+
 ## [2.2.6](https://github.com/nativescript-community/perms/compare/v2.2.5...v2.2.6) (2022-03-08)
 
 
