@@ -25,7 +25,11 @@ type NativePermissions = NativePermissionsNames[number];
 function getNativePermissions(permission: NativePermissions, options?) {
     switch(permission) {
         case 'location': {
-            const result = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION];
+            const result = [android.Manifest.permission.ACCESS_FINE_LOCATION];
+            const coarse = options && options.coarse;
+            if (coarse !== false) {
+                result.push(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
             if (getAndroidSDK() >= ANDROIDQ) {
                 const type = typeof options === 'string' ? options : options && options.type;
                 if (type === 'always') {
@@ -53,7 +57,16 @@ function getNativePermissions(permission: NativePermissions, options?) {
             return [android.Manifest.permission.READ_CALENDAR];
         }
         case 'storage': {
-            return [android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE];
+            const result = [];
+            const read = options && options.read;
+            const write = options && options.write;
+            if (read !== false) {
+                result.push(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (write !== false) {
+                result.push(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            return result;
         }
         case 'photo': {
             return [android.Manifest.permission.WRITE_EXTERNAL_STORAGE];

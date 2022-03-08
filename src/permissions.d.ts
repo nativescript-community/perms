@@ -29,8 +29,20 @@ export interface Rationale {
     buttonNegative?: string;
     buttonNeutral?: string;
 }
-export type CheckOptions = string | { type: string };
-export type RequestOptions = string | { type: string; rationale?: Rationale };
+
+export interface LocationOptions {
+    [k: string]: any;
+    type: string;
+    coarce?: boolean;
+}
+export interface StorageOptions {
+    [k: string]: any;
+    read?: boolean;
+    write?: boolean;
+}
+
+export type CheckOptions = string | LocationOptions | StorageOptions;
+export type RequestOptions = string | LocationOptions | StorageOptions;
 
 export function canOpenSettings(): Promise<boolean>;
 
