@@ -416,7 +416,7 @@ export namespace PermissionsIOS {
             let isEnabled = false;
             const osVersion = parseFloat(Device.osVersion);
             if (osVersion >= 10) {
-                isEnabled = await (new Promise<UNNotificationSettings>(resolve=>UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve) ))!== (UNAuthorizationOptionNone as any);
+                isEnabled =( await (new Promise<UNNotificationSettings>(resolve=>UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve) ))).authorizationStatus === (UNAuthorizationStatus.Authorized);
             } else {
                 isEnabled = UIApplication.sharedApplication.currentUserNotificationSettings.types !== UIUserNotificationType.None;
             }
