@@ -95,7 +95,7 @@ export namespace PermissionsIOS {
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'NSPLocation request', type, status);
             }
-            if (status[0] === Status.Undetermined) {
+           if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
@@ -213,7 +213,7 @@ export namespace PermissionsIOS {
         let peripheralManager: CBPeripheralManager;
         export function request(): Promise<[Status, boolean]> {
             const status = getStatus();
-            if (status[0] === Status.Undetermined) {
+           if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
                     if (!peripheralManager) {
                         peripheralManager = CBPeripheralManager.new();
@@ -416,7 +416,8 @@ export namespace PermissionsIOS {
             let isEnabled = false;
             const osVersion = parseFloat(Device.osVersion);
             if (osVersion >= 10) {
-                isEnabled =( await (new Promise<UNNotificationSettings>(resolve=>UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve) ))).authorizationStatus === (UNAuthorizationStatus.Authorized);
+                const test =await (new Promise<UNNotificationSettings>(resolve=>UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve) ));
+                isEnabled =(test.authorizationStatus === UNAuthorizationStatus.Authorized);
             } else {
                 isEnabled = UIApplication.sharedApplication.currentUserNotificationSettings.types !== UIUserNotificationType.None;
             }
@@ -429,10 +430,10 @@ export namespace PermissionsIOS {
             return [status, true];
         }
 
-        export function request(types: UIUserNotificationType | UNAuthorizationOptions): Promise<[Status, boolean]> {
-            const status = getStatus();
+        export async function request(types: UIUserNotificationType | UNAuthorizationOptions = UNAuthorizationOptions.Alert): Promise<[Status, boolean]> {
+            const status = await getStatus();
 
-            if (status[0] === Status.Undetermined) {
+            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
                     const observer = function() {
                         resolve(getStatus());
