@@ -3,6 +3,18 @@ import { CheckOptions, Permissions as PermissionsType, RequestOptions } from './
 import { CLog, CLogTypes } from './permissions.common';
 export * from './permissions.common';
 
+// Note: @nativescript/core has Utils.dispatchToUIThread in 8.2+
+// keeping here until ready for major release that requires higher core version
+function dispatchToUIThread(func: () => void) {
+	const runloop = CFRunLoopGetMain();
+	if (runloop && func) {
+		CFRunLoopPerformBlock(runloop, kCFRunLoopDefaultMode, func);
+		CFRunLoopWakeUp(runloop);
+	} else if (func) {
+		func();
+	}
+}
+
 export namespace PermissionsIOS {
     export enum Status {
         Undetermined = 'undetermined',
@@ -435,29 +447,32 @@ export namespace PermissionsIOS {
 
             if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
-                    const observer = function() {
-                        resolve(getStatus());
-                        NSNotificationCenter.defaultCenter.removeObserver(observer);
-                    };
-                    NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(UIApplicationDidBecomeActiveNotification, null, null, observer);
                     const osVersion = parseFloat(Device.osVersion);
                     if (osVersion >= 10) {
                         UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError)=>{
                             if (error) {
                                 reject(error);
                             } else {
-                                UIApplication.sharedApplication.registerForRemoteNotifications();
-                                NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                                NSUserDefaults.standardUserDefaults.synchronize();
+                                dispatchToUIThread(async () => {
+                                    UIApplication.sharedApplication.registerForRemoteNotifications();
+                                    NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                                    NSUserDefaults.standardUserDefaults.synchronize();
+                                    const status = await getStatus();
+                                    resolve(status);
+                                })
                             }
                         });
                     } else {
-                        const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
-                        UIApplication.sharedApplication.registerUserNotificationSettings(settings);
-                        UIApplication.sharedApplication.registerForRemoteNotifications();
+                        dispatchToUIThread(async () => {
+                            const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
+                            UIApplication.sharedApplication.registerUserNotificationSettings(settings);
+                            UIApplication.sharedApplication.registerForRemoteNotifications();
 
-                        NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                        NSUserDefaults.standardUserDefaults.synchronize();
+                            NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                            NSUserDefaults.standardUserDefaults.synchronize();
+                            const status = await getStatus();
+                            resolve(status);
+                        });
                     }
                 });
             } else {
