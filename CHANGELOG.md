@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.11](https://github.com/nativescript-community/perms/compare/v2.2.9...v2.2.11) (2022-07-11)
+
+
+### Bug Fixes
+
+* **ios:** notifications ui thread handling ([1b5abba](https://github.com/nativescript-community/perms/commit/1b5abbaf012192c3b66296ebaa3fd452a60e67cd))
+
+
+
+
+
 ## [2.2.10](https://github.com/nativescript-community/perms/compare/v2.2.9...v2.2.10) (2022-07-11)
 
 
