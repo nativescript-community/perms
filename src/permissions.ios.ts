@@ -1,4 +1,4 @@
-import { Device, Trace } from '@nativescript/core';
+import { Device, Trace, Utils } from '@nativescript/core';
 import { CheckOptions, Permissions as PermissionsType, RequestOptions } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 export * from './permissions.common';
@@ -435,29 +435,30 @@ export namespace PermissionsIOS {
 
             if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
-                    const observer = function() {
-                        resolve(getStatus());
-                        NSNotificationCenter.defaultCenter.removeObserver(observer);
-                    };
-                    NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(UIApplicationDidBecomeActiveNotification, null, null, observer);
                     const osVersion = parseFloat(Device.osVersion);
                     if (osVersion >= 10) {
                         UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError)=>{
                             if (error) {
                                 reject(error);
                             } else {
-                                UIApplication.sharedApplication.registerForRemoteNotifications();
-                                NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                                NSUserDefaults.standardUserDefaults.synchronize();
+                                Utils.dispatchToMainThread(async () => {
+                                    UIApplication.sharedApplication.registerForRemoteNotifications();
+                                    NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                                    NSUserDefaults.standardUserDefaults.synchronize();
+                                    resolve(await getStatus());
+                                })
                             }
                         });
                     } else {
-                        const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
-                        UIApplication.sharedApplication.registerUserNotificationSettings(settings);
-                        UIApplication.sharedApplication.registerForRemoteNotifications();
+                        Utils.dispatchToMainThread(async () => {
+                            const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
+                            UIApplication.sharedApplication.registerUserNotificationSettings(settings);
+                            UIApplication.sharedApplication.registerForRemoteNotifications();
 
-                        NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                        NSUserDefaults.standardUserDefaults.synchronize();
+                            NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                            NSUserDefaults.standardUserDefaults.synchronize();
+                            resolve(await getStatus());
+                        });
                     }
                 });
             } else {
