@@ -95,7 +95,7 @@ export namespace PermissionsIOS {
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'NSPLocation request', type, status);
             }
-           if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
+            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
@@ -213,7 +213,7 @@ export namespace PermissionsIOS {
         let peripheralManager: CBPeripheralManager;
         export function request(): Promise<[Status, boolean]> {
             const status = getStatus();
-           if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
+            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
                 return new Promise((resolve, reject) => {
                     if (!peripheralManager) {
                         peripheralManager = CBPeripheralManager.new();
@@ -434,35 +434,31 @@ export namespace PermissionsIOS {
             const status = await getStatus();
 
             if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
-                return new Promise((resolve, reject) => {
-                    const osVersion = parseFloat(Device.osVersion);
-                    if (osVersion >= 10) {
-                        UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError)=>{
-                            if (error) {
-                                reject(error);
-                            } else {
-                                Utils.dispatchToMainThread(async () => {
+                await new Promise<void>(( resolve, reject)=>{
+                    Utils.dispatchToMainThread( () => {
+                        const osVersion = parseFloat(Device.osVersion);
+                        if (osVersion >= 10) {
+                            UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError)=>{
+                                if (error) {
+                                    reject(error);
+                                } else {
                                     UIApplication.sharedApplication.registerForRemoteNotifications();
-                                    NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                                    NSUserDefaults.standardUserDefaults.synchronize();
-                                    resolve(await getStatus());
-                                })
-                            }
-                        });
-                    } else {
-                        Utils.dispatchToMainThread(async () => {
+                                    resolve();
+                                }
+                            });
+                        } else {
                             const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
                             UIApplication.sharedApplication.registerUserNotificationSettings(settings);
                             UIApplication.sharedApplication.registerForRemoteNotifications();
-
-                            NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
-                            NSUserDefaults.standardUserDefaults.synchronize();
-                            resolve(await getStatus());
-                        });
-                    }
+                            resolve();
+                        }
+                    });
                 });
+                NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
+                NSUserDefaults.standardUserDefaults.synchronize();
+                return getStatus();
             } else {
-                return Promise.resolve(status);
+                return status;
             }
         }
     }
