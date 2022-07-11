@@ -1,19 +1,7 @@
-import { Device, Trace } from '@nativescript/core';
+import { Device, Trace, Utils } from '@nativescript/core';
 import { CheckOptions, Permissions as PermissionsType, RequestOptions } from './permissions';
 import { CLog, CLogTypes } from './permissions.common';
 export * from './permissions.common';
-
-// Note: @nativescript/core has Utils.dispatchToUIThread in 8.2+
-// keeping here until ready for major release that requires higher core version
-function dispatchToUIThread(func: () => void) {
-	const runloop = CFRunLoopGetMain();
-	if (runloop && func) {
-		CFRunLoopPerformBlock(runloop, kCFRunLoopDefaultMode, func);
-		CFRunLoopWakeUp(runloop);
-	} else if (func) {
-		func();
-	}
-}
 
 export namespace PermissionsIOS {
     export enum Status {
@@ -453,25 +441,23 @@ export namespace PermissionsIOS {
                             if (error) {
                                 reject(error);
                             } else {
-                                dispatchToUIThread(async () => {
+                                Utils.dispatchToMainThread(async () => {
                                     UIApplication.sharedApplication.registerForRemoteNotifications();
                                     NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
                                     NSUserDefaults.standardUserDefaults.synchronize();
-                                    const status = await getStatus();
-                                    resolve(status);
+                                    resolve(await getStatus());
                                 })
                             }
                         });
                     } else {
-                        dispatchToUIThread(async () => {
+                        Utils.dispatchToMainThread(async () => {
                             const settings = UIUserNotificationSettings.settingsForTypesCategories(types as UIUserNotificationType, null);
                             UIApplication.sharedApplication.registerUserNotificationSettings(settings);
                             UIApplication.sharedApplication.registerForRemoteNotifications();
 
                             NSUserDefaults.standardUserDefaults.setBoolForKey(true, NSPDidAskForNotification);
                             NSUserDefaults.standardUserDefaults.synchronize();
-                            const status = await getStatus();
-                            resolve(status);
+                            resolve(await getStatus());
                         });
                     }
                 });
