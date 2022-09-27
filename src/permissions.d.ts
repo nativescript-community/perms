@@ -1,4 +1,4 @@
-export type Status = 'authorized' | 'denied' | 'limited' | 'restricted' | 'undetermined';
+export type Status = 'authorized' | 'denied' | 'limited' | 'restricted' | 'undetermined' | 'never_ask_again';
 export const PermsTraceCategory = 'NativescriptPerms';
 
 export type Permissions =
@@ -53,7 +53,7 @@ export function getTypes(): Permissions[];
 
 export type Result<T> = T extends any[] ? { [k: string]: Status } : [Status, boolean];
 
-export function check<T = Permissions>(permission: T, options?: CheckOptions): Promise<Result<T>>;
+export function check<T = Permissions | string>(permission: T, options?: CheckOptions): Promise<Result<T>>;
 
 export function request<T = Permissions | Permissions[] | string[]>(permission: T, options?: RequestOptions): Promise<Result<T>>;
 

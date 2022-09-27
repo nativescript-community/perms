@@ -18,11 +18,12 @@ const JELLY_BEAN = 18;
 const MARSHMALLOW = 23;
 const ANDROIDQ = 29;
 const ANDROIDS = 31;
+const ANDROID13 = 33;
 
 const NativePermissionsTypes: PermissionsType[] = ['location', 'camera', 'mediaLocation', 'microphone', 'contacts', 'event', 'storage', 'photo', 'callPhone', 'readSms', 'receiveSms', 'bluetoothScan', 'bluetoothConnect', 'bluetooth'];
 type NativePermissionsNames = typeof NativePermissionsTypes; // type Names = readonly ['Mike', 'Jeff', 'Ben']
 type NativePermissions = NativePermissionsNames[number];
-function getNativePermissions(permission: NativePermissions, options?) {
+function getNativePermissions(permission: NativePermissions | string, options?) {
     switch(permission) {
         case 'location': {
             const result = [];
@@ -102,6 +103,15 @@ function getNativePermissions(permission: NativePermissions, options?) {
             }
             break;
         }
+        case 'notification': {
+            if (getAndroidSDK() >= ANDROID13) {
+                //@ts-ignore
+                return [android.Manifest.permission.POST_NOTIFICATIONS];
+            }
+            break;
+        }
+        default:
+            return [permission];
     }
     return [];
 }
@@ -112,12 +122,6 @@ const STORAGE_KEY = '@NSPermissions:didAskPermission:';
 const setDidAskOnce = (permission: string) => Promise.resolve().then(() => setBoolean(STORAGE_KEY + permission, true));
 
 const getDidAskOnce = (permission: string) => Promise.resolve(!!getBoolean(STORAGE_KEY + permission));
-
-export enum PermissionStatus {
-    GRANTED = 'authorized',
-    DENIED = 'denied',
-    NEVER_ASK_AGAIN = 'never_ask_again'
-}
 
 namespace PermissionsAndroid {
     /**
@@ -174,7 +178,7 @@ namespace PermissionsAndroid {
         } else {
             permission.forEach(p=>result = result && context.checkSelfPermission(p) === granted);
         }
-        return (result);
+        return result;
     }
 
     /**
@@ -183,7 +187,7 @@ namespace PermissionsAndroid {
      *
      * See https://facebook.github.io/react-native/docs/permissionsandroid.html#request
      */
-    export async function request(permission: string, rationale?: Rationale): Promise<PermissionStatus> {
+    export async function request(permission: string, rationale?: Rationale): Promise<Status> {
         // if (rationale) {
         //     const shouldShowRationale = await shouldShowRequestPermissionRationale(permission);
 
@@ -194,7 +198,7 @@ namespace PermissionsAndroid {
         //         });
         //     }
         // }
-        return requestPermission(permission);
+        return (await requestMultiplePermissions([permission]))[permission];
     }
 
     /**
@@ -212,47 +216,6 @@ namespace PermissionsAndroid {
 // PermissionsAndroid = new PermissionsAndroid();
 
 let mRequestCode = 0;
-function requestPermission(permission: string): Promise<PermissionStatus> {
-    const activity: android.app.Activity = androidApp.foregroundActivity || androidApp.startActivity;
-    if (getAndroidSDK() < MARSHMALLOW) {
-        return Promise.resolve(
-            activity.checkPermission(permission, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED
-                ? PermissionStatus.GRANTED
-                : PermissionStatus.DENIED
-        );
-    }
-    if (activity.checkSelfPermission(permission) === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-        return Promise.resolve(PermissionStatus.GRANTED);
-    }
-
-    return new Promise((resolve, reject) => {
-        try {
-            const requestCode = mRequestCode++;
-            activity.requestPermissions([permission], requestCode);
-            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
-                if (args.requestCode === requestCode) {
-                    if (args.grantResults.length > 0) {
-                        if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                            resolve(PermissionStatus.GRANTED);
-                        } else {
-                            if (activity.shouldShowRequestPermissionRationale(permission)) {
-                                resolve(PermissionStatus.DENIED);
-                            } else {
-                                resolve(PermissionStatus.NEVER_ASK_AGAIN);
-                            }
-                        }
-                    } else {
-                        // it is possible that the permissions request interaction with the user is interrupted. In this case you will receive empty permissions and results arrays which should be treated as a cancellation.
-                        reject();
-                    }
-                }
-            });
-        } catch (e) {
-            reject(e);
-        }
-    });
-}
-
 async function requestMultiplePermissions(permissions: string[]): Promise<{ [permission: string]: Status }> {
     const grantedPermissions = {};
     const permissionsToCheck = [];
@@ -268,11 +231,11 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
         if (getAndroidSDK() < MARSHMALLOW) {
             grantedPermissions[perm] =
                 context.checkPermission(perm, android.os.Process.myPid(), android.os.Process.myUid()) === android.content.pm.PackageManager.PERMISSION_GRANTED
-                    ? PermissionStatus.GRANTED
-                    : PermissionStatus.DENIED;
+                    ? 'authorized'
+                    : 'denied';
             checkedPermissionsCount++;
         } else if (context.checkSelfPermission(perm) === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            grantedPermissions[perm] = PermissionStatus.GRANTED;
+            grantedPermissions[perm] = 'authorized';
             checkedPermissionsCount++;
         } else {
             permissionsToCheck.push(perm);
@@ -285,20 +248,22 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
     return new Promise((resolve, reject) => {
         try {
             const requestCode = mRequestCode++;
-
             activity.requestPermissions(permissionsToCheck, requestCode);
             androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
                     const results = args.grantResults;
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'requestMultiplePermissions result', results.length);
+                    }
                     for (let j = 0; j < permissionsToCheck.length; j++) {
                         const permission = permissionsToCheck[j];
                         if (results.length > j && results[j] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                            grantedPermissions[permission] = PermissionStatus.GRANTED;
+                            grantedPermissions[permission] = 'authorized';
                         } else {
                             if (activity.shouldShowRequestPermissionRationale(permission)) {
-                                grantedPermissions[permission] = PermissionStatus.DENIED;
+                                grantedPermissions[permission] = 'denied';
                             } else {
-                                grantedPermissions[permission] = PermissionStatus.NEVER_ASK_AGAIN;
+                                grantedPermissions[permission] = 'never_ask_again';
                             }
                         }
                     }
@@ -306,12 +271,12 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
                 }
 
                 // if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                //     resolve(PermissionStatus.GRANTED);
+                //     resolve('authorized');
                 // } else {
                 //     if (activity.shouldShowRequestPermissionRationale(permission)) {
-                //         resolve(PermissionStatus.DENIED);
+                //         resolve('denied');
                 //     } else {
-                //         resolve(PermissionStatus.NEVER_ASK_AGAIN);
+                //         resolve('never_ask_again');
                 //     }
                 // }
             });
@@ -360,15 +325,13 @@ export function getTypes() {
     return NativePermissionsTypes;
 }
 
-export async function check(permission: PermissionsType, options?: CheckOptions): Promise<[Status, boolean]> {
-    if (Trace.isEnabled()) {
-        CLog(CLogTypes.info, 'check', permission, options);
-    }
+export async function check(permission: PermissionsType | string, options?: CheckOptions): Promise<[Status, boolean]> {
+
     const perms: string | string[] = getNativePermissions(permission, options);
-    if (!perms) {
-        // if (Trace.isEnabled()) {
-        //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
-        // }
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'check', permission, options, getAndroidSDK(), perms);
+    }
+    if (!perms || perms.length === 0) {
         return ['authorized', true];
     }
 
@@ -434,9 +397,9 @@ export function request(permission: PermissionsType | PermissionsType[] | string
         }
 
         if (Array.isArray(permission)) {
-            return Promise.all(permission.map(setDidAskOnce)).then(() => [result as Status, true]);
+            return Promise.all(permission.map(setDidAskOnce)).then(() => [result , true]);
         }
-        return setDidAskOnce(permission).then(() => [result as Status, true]);
+        return setDidAskOnce(permission).then(() => [result , true]);
     });
 }
 
