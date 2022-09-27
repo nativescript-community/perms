@@ -1,4 +1,6 @@
 import {Permissions, check, request} from '@nativescript-community/perms';
+import { Device, Utils } from '@nativescript/core';
+const sdkVersion = parseInt(Device.sdkVersion, 10);
 export default {
     name: 'Home',
     template: `
@@ -58,8 +60,8 @@ export default {
     },
     methods: {
         async checkPermission(perm: Permissions) {
+
             try {
-                console.log('checkPermission', perm);
                 const result = await check(perm, {type:'none'});
                 alert(JSON.stringify(result));
             } catch(err) {
@@ -70,7 +72,19 @@ export default {
         },
         async requestPermission(perm: Permissions) {
             try {
-                console.log('requestPermission', perm);
+                if (__ANDROID__ && perm === 'notification' ) {
+                    // create notification channel
+                    if (sdkVersion >= 26) {
+                        const context = Utils.ad.getApplicationContext();
+                        // API level 26 ("Android O") supports notification channels.
+                        const service = context.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager;
+
+                        // create channel
+                        const channel = new android.app.NotificationChannel('test_channel', 'test_channel', android.app.NotificationManager.IMPORTANCE_MIN);
+                        channel.setDescription('test');
+                        service.createNotificationChannel(channel);
+                    }
+                }
                 const result = await request(perm, {type:'none'});
                 alert(JSON.stringify(result));
             } catch(err) {
