@@ -21,7 +21,7 @@
         "@commitlint/cli": "^16.2.1",
         "@commitlint/config-conventional": "^16.2.1",
         "@nativescript/core": "8.1.5",
-        "@nativescript/types-android": "8.1.0",
+        "@nativescript/types-android": "8.3.1",
         "@nativescript/types-ios": "8.1.1",
         "@nativescript/webpack": "5.0.4",
         "@types/node": "^17.0.18",
