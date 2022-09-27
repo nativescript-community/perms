@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.13](https://github.com/nativescript-community/perms/compare/v2.2.12...v2.2.13) (2022-09-27)
+
+
+### Features
+
+* **android:** added notification(android13) and support for passing native permissions directly ([00fb89e](https://github.com/nativescript-community/perms/commit/00fb89e0d506c80924393252be033f9e7470d34c))
+
+
+
+
+
 ## [2.2.12](https://github.com/nativescript-community/perms/compare/v2.2.11...v2.2.12) (2022-08-15)
 
 **Note:** Version bump only for package @nativescript-community/perms
