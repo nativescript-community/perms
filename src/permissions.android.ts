@@ -1,4 +1,4 @@
-import { Trace } from '@nativescript/core';
+import { Trace, Utils } from '@nativescript/core';
 import { AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp } from '@nativescript/core/application';
 import { getBoolean, setBoolean } from '@nativescript/core/application-settings';
 import { CheckOptions, Permissions as PermissionsType, Rationale, RequestOptions, Status } from './permissions';
@@ -167,7 +167,7 @@ namespace PermissionsAndroid {
      * See https://facebook.github.io/react-native/docs/permissionsandroid.html#check
      */
     export async function check(permission: string | string[]) {
-        const context: android.content.Context = androidApp.foregroundActivity || androidApp.startActivity;
+        const context = Utils.android.getApplicationContext();
         let result =true;
         const granted = android.content.pm.PackageManager.PERMISSION_GRANTED;
         if (!Array.isArray(permission)) {
@@ -223,7 +223,7 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'requestMultiplePermissions', permissions);
     }
-    const context: android.content.Context = androidApp.foregroundActivity || androidApp.startActivity;
+    const context = Utils.android.getApplicationContext();
 
     for (let i = 0; i < permissions.length; i++) {
         const perm = permissions[i];
