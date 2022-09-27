@@ -252,9 +252,6 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
             androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
                     const results = args.grantResults;
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'requestMultiplePermissions result', results.length);
-                    }
                     for (let j = 0; j < permissionsToCheck.length; j++) {
                         const permission = permissionsToCheck[j];
                         if (results.length > j && results[j] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
