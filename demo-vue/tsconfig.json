@@ -22,7 +22,7 @@
         "removeComments": false
     },
     "include": [
-        "app/**/*"
+        "app/**/*", "references.d.ts"
     ],
     "exclude": [
         "node_modules",
