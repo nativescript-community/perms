@@ -1,5 +1,13 @@
+/* eslint-disable @typescript-eslint/unified-signatures */
+/* eslint-disable no-redeclare */
 export type Status = 'authorized' | 'denied' | 'limited' | 'restricted' | 'undetermined' | 'never_ask_again';
 export const PermsTraceCategory = 'NativescriptPerms';
+
+export type AndroidPermissions<T = Exclude<keyof typeof android.Manifest.permission, keyof typeof java.lang.Object>> = {
+    [K in keyof T]: T[K] extends string ? T : never;
+};
+
+export type AndroidPermissionsString = `android.permission.${AndroidPermissions}`/*  | `android.Manifest.permission.${AndroidPermissions}` */;
 
 export type Permissions =
     | 'location'
@@ -21,29 +29,34 @@ export type Permissions =
     | 'storage'
     | 'callPhone'
     | 'readSms'
-    | 'receiveSms';
-export interface Rationale {
-    title: string;
-    message: string;
-    buttonPositive?: string;
-    buttonNegative?: string;
-    buttonNeutral?: string;
-}
+    | 'receiveSms'
+    | AndroidPermissionsString;
 
 export interface LocationOptions {
-    [k: string]: any;
     type: string;
-    coarce?: boolean;
+    coarse?: boolean;
     precise?: boolean;
 }
 export interface StorageOptions {
-    [k: string]: any;
     read?: boolean;
     write?: boolean;
+    // manage?: boolean;
 }
 
-export type CheckOptions = string | LocationOptions | StorageOptions;
-export type RequestOptions = string | LocationOptions | StorageOptions;
+export type PermissionOptions = Record<string, any>;
+
+export interface ObjectPermissions {
+    'location': LocationOptions;
+    'storage': StorageOptions;
+}
+
+export type ObjectPermissionsRest = {
+    [key in Permissions]: PermissionOptions;
+};
+
+export type CheckOptions <T extends Permissions = Permissions>= T extends keyof ObjectPermissions ? ObjectPermissions[T] : any;
+export function check<T extends Permissions>(permission: T, options?: CheckOptions<T>): Promise<Result>;
+export function check<T extends string>(permission: T): Promise<Result>;
 
 export function canOpenSettings(): Promise<boolean>;
 
@@ -51,10 +64,12 @@ export function openSettings(): Promise<boolean>;
 
 export function getTypes(): Permissions[];
 
-export type Result<T> = T extends any[] ? { [k: string]: Status } : [Status, boolean];
+export type Result = [Status, boolean];
+export interface MultiResult { [k: Permissions | string]: Status }
 
-export function check<T = Permissions | string>(permission: T, options?: CheckOptions): Promise<Result<T>>;
+export type RequestOptions <T extends Permissions = Permissions>=  T extends keyof ObjectPermissions ? ObjectPermissions[T] : any;
+export function request<T extends Permissions>(permission: T, options?: RequestOptions<T>): Promise<Result>;
+export function request<T extends Partial<ObjectPermissions | ObjectPermissionsRest>>(permission: T): Promise<MultiResult>;
+export function request<T extends string>(permission: T): Promise<Result>;
 
-export function request<T = Permissions | Permissions[] | string[]>(permission: T, options?: RequestOptions): Promise<Result<T>>;
-
-export function checkMultiple<T = Permissions[]>(permissions: T): Promise<Result<T>>;
+export function checkMultiple<T extends Partial<ObjectPermissions | ObjectPermissionsRest>>(permissions: T): Promise<MultiResult>;

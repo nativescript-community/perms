@@ -746,14 +746,16 @@ export async function check(permission: IOSPermissionTypes, options?: CheckOptio
     return PermissionsIOS.getPermissionStatus(permission, type || DEFAULTS[permission]);
 }
 
-export async function request<T extends IOSPermissionTypes | IOSPermissionTypes[]>(permission: T, options?: RequestOptions): Promise<Result<T>> {
+export async function request<T extends IOSPermissionTypes | Record<IOSPermissionTypes, any>>(permission: T, options?: RequestOptions): Promise<Result<T>> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'request', permission, options);
     }
-    if (Array.isArray(permission)) {
+    if (typeof permission === 'object') {
         const grantedPermissions: Result<IOSPermissionTypes[]> = {};
-        for (let index = 0; index < permission.length; index++) {
-            const res = await request(permission[index] , options);
+        const keys = Object.keys(permission) as IOSPermissionTypes[];
+
+        for (let index = 0; index < keys.length; index++) {
+            const res = await request(keys[index] , options[keys[index]]);
             grantedPermissions[permission[index]] = res[0];
         }
         //@ts-ignore
