@@ -24,3 +24,5 @@ Pods
 plugin/**/*js.map
 plugin/**/*js
 pnpm-lock.yaml
+/.yarn
+/yarn.lock
