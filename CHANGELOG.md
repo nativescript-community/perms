@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.20](https://github.com/nativescript-community/perms/compare/v2.2.19...v2.2.20) (2022-11-29)
+
+
+### Bug Fixes
+
+* rollback the issue was in the app ([a9c636c](https://github.com/nativescript-community/perms/commit/a9c636c1985a06da50ea00bfef3d643d59351770))
+
+
+
+
+
 ## [2.2.19](https://github.com/nativescript-community/perms/compare/v2.2.18...v2.2.19) (2022-11-29)
 
 
