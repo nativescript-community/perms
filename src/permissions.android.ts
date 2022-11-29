@@ -112,8 +112,8 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
         }
         case 'notification': {
             if (getAndroidSDK() >= ANDROID13) {
-                //@ts-ignore
-                return [android.Manifest.permission.POST_NOTIFICATIONS];
+                // TODO: fix for now android.Manifest.permission.POST_NOTIFICATIONS is not found
+                return ['android.permission.POST_NOTIFICATIONS'];
             }
             break;
         }
@@ -261,8 +261,9 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
                 CLog(CLogTypes.info, 'requestPermissions', permissionsToCheck);
             }
             activity.requestPermissions(permissionsToCheck, requestCode);
-            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
+            const onActivityResult = (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
+                    androidApp.off(AndroidApplication.activityRequestPermissionsEvent, onActivityResult);
                     const results = args.grantResults;
                     if (Trace.isEnabled()) {
                         CLog(CLogTypes.info, 'requestPermissions results', results);
@@ -281,17 +282,8 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
                     }
                     resolve(grantedPermissions);
                 }
-
-                // if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                //     resolve(GRANT_RESULTS.GRANTED);
-                // } else {
-                //     if (activity.shouldShowRequestPermissionRationale(permission)) {
-                //         resolve(GRANT_RESULTS.DENIED);
-                //     } else {
-                //         resolve(GRANT_RESULTS.NEVER_ASK_AGAIN);
-                //     }
-                // }
-            });
+            };
+            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, onActivityResult);
         } catch (e) {
             reject(e);
         }
