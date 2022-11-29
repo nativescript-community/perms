@@ -43,9 +43,9 @@ export namespace PermissionsIOS {
         }
         let locationManager: CLLocationManager;
         let locationManagerDelegate: CLLocationManagerDelegateImpl;
-        export type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
+        type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
         @NativeClass
-        export class CLLocationManagerDelegateImpl extends NSObject implements CLLocationManagerDelegate {
+        class CLLocationManagerDelegateImpl extends NSObject implements CLLocationManagerDelegate {
             public static ObjCProtocols = [CLLocationManagerDelegate];
 
             private subDelegates: SubCLLocationManagerDelegate[];
