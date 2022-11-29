@@ -339,7 +339,7 @@ export namespace PermissionsIOS {
         let status: Status = Status.Undetermined;
         export function getStatus(): [Status, boolean] {
             if (status === Status.Undetermined) {
-                const cmStatus = (CMMotionActivityManager.authorizationStatus as any) as CMAuthorizationStatus;
+                const cmStatus = CMMotionActivityManager.authorizationStatus();
                 switch (cmStatus) {
                     case CMAuthorizationStatus.Authorized:
                         status = Status.Authorized;
