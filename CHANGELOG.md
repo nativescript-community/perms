@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.18](https://github.com/nativescript-community/perms/compare/v2.2.17...v2.2.18) (2022-11-29)
+
+
+### Bug Fixes
+
+* **ios:** anoher motion fix … ([b8a8c1c](https://github.com/nativescript-community/perms/commit/b8a8c1ca673e3530718e67882557dfc5f68f2327))
+
+
+
+
+
 ## [2.2.17](https://github.com/nativescript-community/perms/compare/v2.2.16...v2.2.17) (2022-11-29)
 
 
