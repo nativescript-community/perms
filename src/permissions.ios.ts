@@ -175,75 +175,75 @@ export namespace PermissionsIOS {
             }
             return [status, true];
         }
-        export type SubCBPeripheralManagerDelegate = Partial<CBPeripheralManagerDelegate>;
-        @NativeClass
-        export class CBPeripheralManagerDelegateImpl extends NSObject implements CBPeripheralManagerDelegate {
-            public static ObjCProtocols = [CBPeripheralManagerDelegate];
+         type SubCBPeripheralManagerDelegate = Partial<CBPeripheralManagerDelegate>;
+         @NativeClass
+         class CBPeripheralManagerDelegateImpl extends NSObject implements CBPeripheralManagerDelegate {
+             public static ObjCProtocols = [CBPeripheralManagerDelegate];
 
-            private subDelegates: SubCBPeripheralManagerDelegate[];
+             private subDelegates: SubCBPeripheralManagerDelegate[];
 
-            public addSubDelegate(delegate: SubCBPeripheralManagerDelegate) {
-                const index = this.subDelegates.indexOf(delegate);
-                if (index === -1) {
-                    this.subDelegates.push(delegate);
-                }
-            }
+             public addSubDelegate(delegate: SubCBPeripheralManagerDelegate) {
+                 const index = this.subDelegates.indexOf(delegate);
+                 if (index === -1) {
+                     this.subDelegates.push(delegate);
+                 }
+             }
 
-            public removeSubDelegate(delegate: SubCBPeripheralManagerDelegate) {
-                const index = this.subDelegates.indexOf(delegate);
-                if (index !== -1) {
-                    this.subDelegates.splice(index, 1);
-                }
-            }
-            static new(): CBPeripheralManagerDelegateImpl {
-                return super.new() as CBPeripheralManagerDelegateImpl;
-            }
-            public initDelegate(): CBPeripheralManagerDelegateImpl {
-                this.subDelegates = [];
-                return this;
-            }
-            peripheralManagerDidUpdateState(peripheralManager) {
-                this.subDelegates.forEach(d => {
-                    if (d.peripheralManagerDidUpdateState) {
-                        d.peripheralManagerDidUpdateState(peripheralManager);
-                    }
-                });
-            }
-        }
-        let peripheralManager: CBPeripheralManager;
-        export function request(): Promise<[Status, boolean]> {
-            const status = getStatus();
-            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
-                return new Promise((resolve, reject) => {
-                    if (!peripheralManager) {
-                        peripheralManager = CBPeripheralManager.new();
-                        peripheralManager.delegate = CBPeripheralManagerDelegateImpl.new().initDelegate();
-                    }
-                    const subD = {
-                        peripheralManagerDidUpdateState: peripheralManager => {
-                            if (peripheralManager) {
-                                peripheralManager.stopAdvertising();
-                                (peripheralManager.delegate as CBPeripheralManagerDelegateImpl).removeSubDelegate(subD);
-                                peripheralManager.delegate = null;
-                                peripheralManager = null;
-                            }
-                            // for some reason, checking permission right away returns denied. need to wait a tiny bit
-                            setTimeout(() => {
-                                resolve(getStatus());
-                            }, 100);
-                        }
-                    };
-                    (peripheralManager.delegate as CBPeripheralManagerDelegateImpl).addSubDelegate(subD);
-                    try {
-                        peripheralManager.startAdvertising(null);
-                    } catch (e) {
-                        reject(e);
-                    }
-                });
-            } else {
-                return Promise.resolve(status);
-            }
-        }
+             public removeSubDelegate(delegate: SubCBPeripheralManagerDelegate) {
+                 const index = this.subDelegates.indexOf(delegate);
+                 if (index !== -1) {
+                     this.subDelegates.splice(index, 1);
+                 }
+             }
+             static new(): CBPeripheralManagerDelegateImpl {
+                 return super.new() as CBPeripheralManagerDelegateImpl;
+             }
+             public initDelegate(): CBPeripheralManagerDelegateImpl {
+                 this.subDelegates = [];
+                 return this;
+             }
+             peripheralManagerDidUpdateState(peripheralManager) {
+                 this.subDelegates.forEach(d => {
+                     if (d.peripheralManagerDidUpdateState) {
+                         d.peripheralManagerDidUpdateState(peripheralManager);
+                     }
+                 });
+             }
+         }
+         let peripheralManager: CBPeripheralManager;
+         export function request(): Promise<[Status, boolean]> {
+             const status = getStatus();
+             if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
+                 return new Promise((resolve, reject) => {
+                     if (!peripheralManager) {
+                         peripheralManager = CBPeripheralManager.new();
+                         peripheralManager.delegate = CBPeripheralManagerDelegateImpl.new().initDelegate();
+                     }
+                     const subD = {
+                         peripheralManagerDidUpdateState: peripheralManager => {
+                             if (peripheralManager) {
+                                 peripheralManager.stopAdvertising();
+                                 (peripheralManager.delegate as CBPeripheralManagerDelegateImpl).removeSubDelegate(subD);
+                                 peripheralManager.delegate = null;
+                                 peripheralManager = null;
+                             }
+                             // for some reason, checking permission right away returns denied. need to wait a tiny bit
+                             setTimeout(() => {
+                                 resolve(getStatus());
+                             }, 100);
+                         }
+                     };
+                     (peripheralManager.delegate as CBPeripheralManagerDelegateImpl).addSubDelegate(subD);
+                     try {
+                         peripheralManager.startAdvertising(null);
+                     } catch (e) {
+                         reject(e);
+                     }
+                 });
+             } else {
+                 return Promise.resolve(status);
+             }
+         }
     }
     namespace NSPAudioVideo {
         let status: Status = Status.Undetermined;
