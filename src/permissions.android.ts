@@ -112,8 +112,8 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
         }
         case 'notification': {
             if (getAndroidSDK() >= ANDROID13) {
-                // TODO: fix for now android.Manifest.permission.POST_NOTIFICATIONS is not found
-                return ['android.permission.POST_NOTIFICATIONS'];
+                // @ts-ignore
+                return [android.Manifest.permission.POST_NOTIFICATIONS];
             }
             break;
         }
