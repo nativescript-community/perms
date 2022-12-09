@@ -385,7 +385,6 @@ export function request(permission: PermissionsType | string | ObjectPermissions
         types = getNativePermissions(permission, options);
         // }
     }
-    console.log('types', types);
     if (types.length === 0) {
         // if (Trace.isEnabled()) {
         //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
@@ -415,11 +414,9 @@ export function checkMultiple(permissions: ObjectPermissions) {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'checkMultiple', permissions);
     }
-    return Promise.all(Object.keys(permissions).map(permission => check(permission, permissions[permission]).then(r=>[permission, r]))).then(result =>{
-        console.log('test', result);
-        return result.reduce((acc, value: [string, [Status, boolean]], index) => {
-            acc[value[0]] = value[1];
-            return acc;
-        }, {});}
+    return Promise.all(Object.keys(permissions).map(permission => check(permission, permissions[permission]).then(r=>[permission, r]))).then(result =>result.reduce((acc, value: [string, [Status, boolean]], index) => {
+        acc[value[0]] = value[1];
+        return acc;
+    }, {})
     );
 }
