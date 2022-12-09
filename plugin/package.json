@@ -1,6 +1,6 @@
 {
     "name": "@nativescript-community/perms",
-    "version": "2.2.20",
+    "version": "2.2.21",
     "description": "An unified permissions API for NativeScript on iOS and Android.",
     "main": "./permissions",
     "sideEffects": false,

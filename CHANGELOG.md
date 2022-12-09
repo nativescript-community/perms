@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.21](https://github.com/nativescript-community/perms/compare/v2.2.20...v2.2.21) (2022-12-09)
+
+
+### Bug Fixes
+
+* **android:** cleanup logs ([8534636](https://github.com/nativescript-community/perms/commit/853463662ae7f95cac3ade34b997d75d91be6752))
+
+
+
+
+
 ## [2.2.20](https://github.com/nativescript-community/perms/compare/v2.2.19...v2.2.20) (2022-11-29)
 
 
