@@ -3,6 +3,83 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.21](https://github.com/nativescript-community/perms/compare/v2.2.20...v2.2.21) (2022-12-09)
+
+
+### Bug Fixes
+
+* **android:** cleanup logs ([8534636](https://github.com/nativescript-community/perms/commit/853463662ae7f95cac3ade34b997d75d91be6752))
+
+
+
+
+
+## [2.2.20](https://github.com/nativescript-community/perms/compare/v2.2.19...v2.2.20) (2022-11-29)
+
+
+### Bug Fixes
+
+* rollback the issue was in the app ([a9c636c](https://github.com/nativescript-community/perms/commit/a9c636c1985a06da50ea00bfef3d643d59351770))
+
+
+
+
+
+## [2.2.19](https://github.com/nativescript-community/perms/compare/v2.2.18...v2.2.19) (2022-11-29)
+
+
+### Bug Fixes
+
+* **android:** notifications permission on android 13 ([a66e627](https://github.com/nativescript-community/perms/commit/a66e627a2df3c61feef99a360b09fb725926c676))
+
+
+
+
+
+## [2.2.18](https://github.com/nativescript-community/perms/compare/v2.2.17...v2.2.18) (2022-11-29)
+
+
+### Bug Fixes
+
+* **ios:** anoher motion fix … ([b8a8c1c](https://github.com/nativescript-community/perms/commit/b8a8c1ca673e3530718e67882557dfc5f68f2327))
+
+
+
+
+
+## [2.2.17](https://github.com/nativescript-community/perms/compare/v2.2.16...v2.2.17) (2022-11-29)
+
+
+### Bug Fixes
+
+* **ios:** motion permission fix ([714ca67](https://github.com/nativescript-community/perms/commit/714ca67816970cc1dc79a03a8945e5304310378f))
+
+
+
+
+
+## [2.2.16](https://github.com/nativescript-community/perms/compare/v2.2.15...v2.2.16) (2022-11-29)
+
+
+### Bug Fixes
+
+* another build fix … ([747ab85](https://github.com/nativescript-community/perms/commit/747ab85b88f17c892ab1556d5085e111504161d1))
+
+
+
+
+
+## [2.2.15](https://github.com/nativescript-community/perms/compare/v2.2.14...v2.2.15) (2022-11-29)
+
+
+### Bug Fixes
+
+* build fix ([9b39b11](https://github.com/nativescript-community/perms/commit/9b39b1181e76f313864d94de06b11dfd4a8b18e4))
+
+
+
+
+
 ## [2.2.14](https://github.com/nativescript-community/perms/compare/v2.2.13...v2.2.14) (2022-11-25)
 
 **Note:** Version bump only for package @nativescript-community/perms

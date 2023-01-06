@@ -127,7 +127,7 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
         }
         case 'notification': {
             if (getAndroidSDK() >= ANDROID13) {
-                //@ts-ignore
+                // @ts-ignore
                 return [android.Manifest.permission.POST_NOTIFICATIONS];
             }
             break;
@@ -273,8 +273,9 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
                 CLog(CLogTypes.info, 'requestPermissions', permissionsToCheck);
             }
             activity.requestPermissions(permissionsToCheck, requestCode);
-            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, (args: AndroidActivityRequestPermissionsEventData) => {
+            const onActivityResult = (args: AndroidActivityRequestPermissionsEventData) => {
                 if (args.requestCode === requestCode) {
+                    androidApp.off(AndroidApplication.activityRequestPermissionsEvent, onActivityResult);
                     const results = args.grantResults;
                     if (Trace.isEnabled()) {
                         CLog(CLogTypes.info, 'requestPermissions results', results);
@@ -293,17 +294,8 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
                     }
                     resolve(grantedPermissions);
                 }
-
-                // if (args.grantResults.length > 0 && args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                //     resolve(GRANT_RESULTS.GRANTED);
-                // } else {
-                //     if (activity.shouldShowRequestPermissionRationale(permission)) {
-                //         resolve(GRANT_RESULTS.DENIED);
-                //     } else {
-                //         resolve(GRANT_RESULTS.NEVER_ASK_AGAIN);
-                //     }
-                // }
-            });
+            };
+            androidApp.on(AndroidApplication.activityRequestPermissionsEvent, onActivityResult);
         } catch (e) {
             reject(e);
         }
@@ -403,7 +395,6 @@ export function request(permission: PermissionsType | string | ObjectPermissions
         types = getNativePermissions(permission, options);
         // }
     }
-    console.log('types', types);
     if (types.length === 0) {
         // if (Trace.isEnabled()) {
         //     CLog(CLogTypes.warning, permission, 'is not a valid permission type on Android');
@@ -432,11 +423,10 @@ export function checkMultiple(permissions: ObjectPermissions) {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'checkMultiple', permissions);
     }
-    return Promise.all(Object.keys(permissions).map((permission) => check(permission, permissions[permission]).then((r) => [permission, r]))).then((result) => {
-        console.log('test', result);
-        return result.reduce((acc, value: [string, [Status, boolean]], index) => {
+    return Promise.all(Object.keys(permissions).map((permission) => check(permission, permissions[permission]).then((r) => [permission, r]))).then((result) =>
+        result.reduce((acc, value: [string, [Status, boolean]], index) => {
             acc[value[0]] = value[1];
             return acc;
-        }, {});
-    });
+        }, {})
+    );
 }

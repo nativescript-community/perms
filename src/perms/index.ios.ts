@@ -43,9 +43,9 @@ export namespace PermissionsIOS {
         }
         let locationManager: CLLocationManager;
         let locationManagerDelegate: CLLocationManagerDelegateImpl;
-        export type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
+        type SubCLLocationManagerDelegate = Partial<CLLocationManagerDelegate>;
         @NativeClass
-        export class CLLocationManagerDelegateImpl extends NSObject implements CLLocationManagerDelegate {
+        class CLLocationManagerDelegateImpl extends NSObject implements CLLocationManagerDelegate {
             public static ObjCProtocols = [CLLocationManagerDelegate];
 
             private subDelegates: SubCLLocationManagerDelegate[];
@@ -175,9 +175,9 @@ export namespace PermissionsIOS {
             }
             return [status, true];
         }
-        export type SubCBPeripheralManagerDelegate = Partial<CBPeripheralManagerDelegate>;
+        type SubCBPeripheralManagerDelegate = Partial<CBPeripheralManagerDelegate>;
         @NativeClass
-        export class CBPeripheralManagerDelegateImpl extends NSObject implements CBPeripheralManagerDelegate {
+        class CBPeripheralManagerDelegateImpl extends NSObject implements CBPeripheralManagerDelegate {
             public static ObjCProtocols = [CBPeripheralManagerDelegate];
 
             private subDelegates: SubCBPeripheralManagerDelegate[];
@@ -339,7 +339,7 @@ export namespace PermissionsIOS {
         let status: Status = Status.Undetermined;
         export function getStatus(): [Status, boolean] {
             if (status === Status.Undetermined) {
-                const cmStatus = CMMotionActivityManager.authorizationStatus as any as CMAuthorizationStatus;
+                const cmStatus = CMMotionActivityManager.authorizationStatus();
                 switch (cmStatus) {
                     case CMAuthorizationStatus.Authorized:
                         status = Status.Authorized;
@@ -355,9 +355,11 @@ export namespace PermissionsIOS {
             return [status, true];
         }
 
-        export function request(): Promise<[Status, boolean]> {
-            if (status === Status.Undetermined) {
-                return new Promise((resolve) => {
+        export async function request(): Promise<[Status, boolean]> {
+            const status = getStatus();
+
+            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
+                await new Promise<void>((resolve, reject) => {
                     let activityManager = CMMotionActivityManager.new();
                     let motionActivityQueue = NSOperationQueue.new();
                     if (Trace.isEnabled()) {
@@ -365,20 +367,19 @@ export namespace PermissionsIOS {
                     }
                     activityManager.queryActivityStartingFromDateToDateToQueueWithHandler(NSDate.distantPast, new Date(), motionActivityQueue, (activities, error) => {
                         if (error) {
-                            status = Status.Denied;
-                        } else if (activities || !error) {
-                            status = Status.Authorized;
+                            reject(error);
                         }
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'NSPMotion got response', activities, error, status, getStatus());
                         }
-                        resolve([status, true]);
+                        resolve();
                         activityManager = null;
                         motionActivityQueue = null;
                     });
                 });
+                return getStatus();
             } else {
-                return Promise.resolve([status, true]);
+                return status;
             }
         }
     }
