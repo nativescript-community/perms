@@ -1,7 +1,7 @@
 import { Device, Trace, Utils } from '@nativescript/core';
-import { CheckOptions, Permissions as PermissionsType, RequestOptions } from './permissions';
-import { CLog, CLogTypes } from './permissions.common';
-export * from './permissions.common';
+import { CheckOptions, Permissions as PermissionsType, RequestOptions } from '.';
+import { CLog, CLogTypes } from './index.common';
+export * from './index.common';
 
 export namespace PermissionsIOS {
     export enum Status {
@@ -75,7 +75,7 @@ export namespace PermissionsIOS {
             }
             locationManagerDidChangeAuthorizationStatus(manager: CLLocationManager, status: CLAuthorizationStatus) {
                 this.subDelegates &&
-                    this.subDelegates.forEach(d => {
+                    this.subDelegates.forEach((d) => {
                         if (d.locationManagerDidChangeAuthorizationStatus) {
                             d.locationManagerDidChangeAuthorizationStatus(manager, status);
                         }
@@ -203,7 +203,7 @@ export namespace PermissionsIOS {
                 return this;
             }
             peripheralManagerDidUpdateState(peripheralManager) {
-                this.subDelegates.forEach(d => {
+                this.subDelegates.forEach((d) => {
                     if (d.peripheralManagerDidUpdateState) {
                         d.peripheralManagerDidUpdateState(peripheralManager);
                     }
@@ -220,7 +220,7 @@ export namespace PermissionsIOS {
                         peripheralManager.delegate = CBPeripheralManagerDelegateImpl.new().initDelegate();
                     }
                     const subD = {
-                        peripheralManagerDidUpdateState: peripheralManager => {
+                        peripheralManagerDidUpdateState: (peripheralManager) => {
                             if (peripheralManager) {
                                 peripheralManager.stopAdvertising();
                                 (peripheralManager.delegate as CBPeripheralManagerDelegateImpl).removeSubDelegate(subD);
@@ -274,7 +274,7 @@ export namespace PermissionsIOS {
 
         export function request(type): Promise<[Status, boolean]> {
             return new Promise((resolve, reject) => {
-                AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(typeFromString(type), granted => resolve(getStatus(type)));
+                AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(typeFromString(type), (granted) => resolve(getStatus(type)));
             });
         }
     }
@@ -299,7 +299,7 @@ export namespace PermissionsIOS {
         }
 
         export function request(): Promise<[Status, boolean]> {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 SFSpeechRecognizer.requestAuthorization(() => resolve(getStatus()));
             });
         }
@@ -330,7 +330,7 @@ export namespace PermissionsIOS {
         }
 
         export function request(): Promise<[Status, boolean]> {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 PHPhotoLibrary.requestAuthorization(() => resolve(getStatus()));
             });
         }
@@ -339,7 +339,7 @@ export namespace PermissionsIOS {
         let status: Status = Status.Undetermined;
         export function getStatus(): [Status, boolean] {
             if (status === Status.Undetermined) {
-                const cmStatus = (CMMotionActivityManager.authorizationStatus as any) as CMAuthorizationStatus;
+                const cmStatus = CMMotionActivityManager.authorizationStatus as any as CMAuthorizationStatus;
                 switch (cmStatus) {
                     case CMAuthorizationStatus.Authorized:
                         status = Status.Authorized;
@@ -357,7 +357,7 @@ export namespace PermissionsIOS {
 
         export function request(): Promise<[Status, boolean]> {
             if (status === Status.Undetermined) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     let activityManager = CMMotionActivityManager.new();
                     let motionActivityQueue = NSOperationQueue.new();
                     if (Trace.isEnabled()) {
@@ -403,7 +403,7 @@ export namespace PermissionsIOS {
         }
 
         export function request(): Promise<[Status, boolean]> {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 MPMediaLibrary.requestAuthorization(() => resolve(getStatus()));
             });
         }
@@ -416,8 +416,8 @@ export namespace PermissionsIOS {
             let isEnabled = false;
             const osVersion = parseFloat(Device.osVersion);
             if (osVersion >= 10) {
-                const test =await (new Promise<UNNotificationSettings>(resolve=>UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve) ));
-                isEnabled =(test.authorizationStatus === UNAuthorizationStatus.Authorized);
+                const test = await new Promise<UNNotificationSettings>((resolve) => UNUserNotificationCenter.currentNotificationCenter().getNotificationSettingsWithCompletionHandler(resolve));
+                isEnabled = test.authorizationStatus === UNAuthorizationStatus.Authorized;
             } else {
                 isEnabled = UIApplication.sharedApplication.currentUserNotificationSettings.types !== UIUserNotificationType.None;
             }
@@ -434,11 +434,11 @@ export namespace PermissionsIOS {
             const status = await getStatus();
 
             if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
-                await new Promise<void>(( resolve, reject)=>{
-                    Utils.dispatchToMainThread( () => {
+                await new Promise<void>((resolve, reject) => {
+                    Utils.dispatchToMainThread(() => {
                         const osVersion = parseFloat(Device.osVersion);
                         if (osVersion >= 10) {
-                            UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError)=>{
+                            UNUserNotificationCenter.currentNotificationCenter().requestAuthorizationWithOptionsCompletionHandler(types as UNAuthorizationOptions, (p1: boolean, error: NSError) => {
                                 if (error) {
                                     reject(error);
                                 } else {
@@ -483,7 +483,7 @@ export namespace PermissionsIOS {
         }
 
         export function request(): Promise<[Status, boolean]> {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 const contactStore = CNContactStore.new();
                 contactStore.requestAccessForEntityTypeCompletionHandler(CNEntityType.Contacts, () => resolve(getStatus()));
             });
@@ -510,7 +510,7 @@ export namespace PermissionsIOS {
         }
 
         export function request(): Promise<Status> {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 const contactStore = CNContactStore.new();
                 contactStore.requestAccessForEntityTypeCompletionHandler(CNEntityType.Contacts, () => resolve(getStatus()[0]));
             });
@@ -544,7 +544,7 @@ export namespace PermissionsIOS {
         }
 
         export function request(type?: string): Promise<[Status, boolean]> {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 const aStore = EKEventStore.new();
                 aStore.requestAccessToEntityTypeCompletion(typeFromString(type), () => resolve(getStatus(type)));
             });
@@ -570,7 +570,7 @@ export namespace PermissionsIOS {
     export function openSettings() {
         return new Promise((resolve, reject) => {
             const center = NSNotificationCenter.defaultCenter;
-            const observer = function(notif) {
+            const observer = function (notif) {
                 resolve(true);
                 center.removeObserver(observer);
             };
@@ -633,7 +633,7 @@ export namespace PermissionsIOS {
                 break;
         }
 
-        return (status);
+        return status;
     }
     export function requestPermission(type, json): Promise<[Status, boolean]> {
         if (Trace.isEnabled()) {
@@ -719,7 +719,9 @@ export function getTypes() {
 }
 
 type SingleResult = [PermissionsIOS.Status, boolean];
-interface MultipleResult { [k: string]: PermissionsIOS.Status }
+interface MultipleResult {
+    [k: string]: PermissionsIOS.Status;
+}
 type Result<T> = T extends any[] ? MultipleResult : SingleResult;
 
 export async function check(permission: IOSPermissionTypes, options?: CheckOptions): Promise<SingleResult> {
@@ -727,7 +729,6 @@ export async function check(permission: IOSPermissionTypes, options?: CheckOptio
         CLog(CLogTypes.info, 'check', permission, options);
     }
     if (permissionTypes.indexOf(permission) === -1) {
-
         if (Trace.isEnabled()) {
             CLog(CLogTypes.warning, permission, 'is not a valid permission type on iOS');
         }
@@ -755,11 +756,11 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
         const keys = Object.keys(permission) as IOSPermissionTypes[];
 
         for (let index = 0; index < keys.length; index++) {
-            const res = await request(keys[index] , options[keys[index]]);
+            const res = await request(keys[index], options[keys[index]]);
             grantedPermissions[permission[index]] = res[0];
         }
         //@ts-ignore
-        return grantedPermissions ;
+        return grantedPermissions;
     }
     if (permissionTypes.indexOf(permission) === -1) {
         if (Trace.isEnabled()) {
@@ -788,7 +789,7 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
 }
 
 export function checkMultiple(permissions: PermissionsType[]) {
-    return Promise.all(permissions.map(permission => this.check(permission))).then(result =>
+    return Promise.all(permissions.map((permission) => this.check(permission))).then((result) =>
         result.reduce((acc, value, index) => {
             const name = permissions[index];
             acc[name] = value;

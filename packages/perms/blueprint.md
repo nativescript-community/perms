@@ -1,77 +1,18 @@
-<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️--><!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
-<!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      DO NOT EDIT THIS READEME DIRECTLY! Edit "bluesprint.md" instead.
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<h1 align="center">@nativescript-community/perms</h1>
-<p align="center">
-		<a href="https://npmcharts.com/compare/@nativescript-community/perms?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/@nativescript-community/perms.svg" height="20"/></a>
-<a href="https://www.npmjs.com/package/@nativescript-community/perms"><img alt="NPM Version" src="https://img.shields.io/npm/v/@nativescript-community/perms.svg" height="20"/></a>
-	</p>
-
-<p align="center">
-  <b>An unified permissions API for NativeScript on iOS and Android.</b></br>
-  <sub><sub>
-</p>
-
-<br />
-
+{{ load:../../tools/readme/edit-warning.md }}
+{{ template:title }}
+{{ template:badges }}
+{{ template:description }}
 
 | <img src="https://raw.githubusercontent.com/nativescript-community/gps/master/images/demo-ios.gif" height="500" /> | <img src="https://raw.githubusercontent.com/nativescript-community/gps/master/images/demo-android.gif" height="500" /> |
 | --- | ----------- |
 | iOS Demo | Android Demo |
 
-
-[](#table-of-contents)
-
-
-[](#table-of-contents)
-
-## Table of Contents
-
-* [Installation](#installation)
-* [API](#api)
-	* [Permissions statuses](#permissions-statuses)
-	* [Supported permissions types](#supported-permissions-types)
-	* [Methods](#methods)
-	* [iOS Notes](#ios-notes)
-		* [App Store submission disclaimer](#app-store-submission-disclaimer)
-	* [Android Notes](#android-notes)
-* [Troubleshooting](#troubleshooting)
-		* [Q: iOS - App crashes as soon as I request permission](#q-ios---app-crashes-as-soon-as-i-request-permission)
-		* [Q: iOS - App crashes when I change permission from settings](#q-ios---app-crashes-when-i-change-permission-from-settings)
-
-
-[](#installation)
-
-
-[](#installation)
+{{ template:toc }}
 
 ## Installation
 Run the following command from the root of your project:
 
-`ns plugin add @nativescript-community/perms`
-
-
-[](#api)
-
-
-[](#api)
+`ns plugin add {{ pkg.name }}`
 
 ## API
 
@@ -232,12 +173,6 @@ android {
     targetSdkVersion 23 // ← set at least 23
     // ...
 ```
-
-
-[](#troubleshooting)
-
-
-[](#troubleshooting)
 
 ## Troubleshooting
 

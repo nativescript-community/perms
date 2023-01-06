@@ -1,4 +1,4 @@
-<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️--><!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
+<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
 <!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -39,9 +39,6 @@
 
 [](#table-of-contents)
 
-
-[](#table-of-contents)
-
 ## Table of Contents
 
 * [Installation](#installation)
@@ -59,16 +56,10 @@
 
 [](#installation)
 
-
-[](#installation)
-
 ## Installation
 Run the following command from the root of your project:
 
 `ns plugin add @nativescript-community/perms`
-
-
-[](#api)
 
 
 [](#api)
@@ -232,9 +223,6 @@ android {
     targetSdkVersion 23 // ← set at least 23
     // ...
 ```
-
-
-[](#troubleshooting)
 
 
 [](#troubleshooting)

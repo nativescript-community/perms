@@ -1,0 +1,14 @@
+{
+    "name": "@nativescript-community/template-snippet",
+    "private": true,
+    "version": "0.0.1",
+    "dependencies": {
+        "@nativescript-community/perms": "2.2.21"
+    },
+    "nativescript": {
+        "platforms": {
+            "android": "2.3.0",
+            "ios": "2.3.0"
+        }
+    }
+}

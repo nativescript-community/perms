@@ -2,14 +2,21 @@
     "name": "@nativescript-community/perms",
     "version": "2.2.14",
     "description": "An unified permissions API for NativeScript on iOS and Android.",
-    "main": "./permissions",
+    "main": "./index",
     "sideEffects": false,
-    "typings": "./permissions.d.ts",
+    "typings": "./index.d.ts",
     "nativescript": {
         "platforms": {
             "android": "6.0.0",
             "ios": "6.0.0"
         }
+    },
+    "scripts": {
+        "build": "npm run tsc",
+        "build.all": "npm run build",
+        "readme": "readme generate -c ../../tools/readme/blueprint.json",
+        "tsc": "cpy '**/*.d.ts' '../../packages/perms' --parents --cwd=../../src/perms && tsc -skipLibCheck -d",
+        "clean": "rimraf ./*.d.ts ./*.js ./*.js.map"
     },
     "keywords": [
         "NativeScript",
