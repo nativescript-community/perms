@@ -1,5 +1,5 @@
 import { Device, Trace, Utils } from '@nativescript/core';
-import { CheckOptions, Permissions as PermissionsType, RequestOptions } from '.';
+import { CheckOptions, MultiResult, ObjectPermissions, ObjectPermissionsRest, PermissionOptions, Permissions as PermissionsType, RequestOptions } from '.';
 import { CLog, CLogTypes } from './index.common';
 export * from './index.common';
 
@@ -705,6 +705,9 @@ const DEFAULTS = {
 };
 
 type IOSPermissionTypes = `${PermissionsIOS.NSType}`;
+type ObjectIOSPermissionsRest = {
+    [key in IOSPermissionTypes]: PermissionOptions;
+};
 const permissionTypes = Object.values(PermissionsIOS.NSType) as IOSPermissionTypes[];
 
 export function canOpenSettings() {
@@ -789,12 +792,14 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
     return PermissionsIOS.requestPermission(permission, type || DEFAULTS[permission]);
 }
 
-export function checkMultiple(permissions: PermissionsType[]) {
-    return Promise.all(permissions.map((permission) => this.check(permission))).then((result) =>
-        result.reduce((acc, value, index) => {
-            const name = permissions[index];
-            acc[name] = value;
+export function checkMultiple<T extends Partial<ObjectIOSPermissionsRest>>(permissions: T): Promise<MultipleResult> {
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'checkMultiple', permissions);
+    }
+    return Promise.all(Object.keys(permissions).map((permission) => check(permission as any, permissions[permission]).then((r) => [permission, r]))).then((result) =>
+        result.reduce((acc, value: [string, [PermissionsIOS.Status, boolean]], index) => {
+            acc[value[0]] = value[1][0];
             return acc;
-        }, {})
+        }, {} as MultipleResult)
     );
 }

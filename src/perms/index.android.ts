@@ -1,7 +1,7 @@
 import { Trace, Utils } from '@nativescript/core';
 import { AndroidActivityRequestPermissionsEventData, AndroidApplication, android as androidApp } from '@nativescript/core/application';
 import { getBoolean, setBoolean } from '@nativescript/core/application-settings';
-import { CheckOptions, ObjectPermissions, Permissions as PermissionsType, RequestOptions, Status } from '.';
+import { CheckOptions, MultiResult, ObjectPermissions, ObjectPermissionsRest, Permissions as PermissionsType, RequestOptions, Status } from '.';
 import { CLog, CLogTypes } from './index.common';
 
 export * from './index.common';
@@ -419,13 +419,13 @@ export function request(permission: PermissionsType | string | ObjectPermissions
     });
 }
 
-export function checkMultiple(permissions: ObjectPermissions) {
+export function checkMultiple<T extends Partial<ObjectPermissionsRest>>(permissions: T): Promise<MultiResult> {
     if (Trace.isEnabled()) {
         CLog(CLogTypes.info, 'checkMultiple', permissions);
     }
     return Promise.all(Object.keys(permissions).map((permission) => check(permission, permissions[permission]).then((r) => [permission, r]))).then((result) =>
         result.reduce((acc, value: [string, [Status, boolean]], index) => {
-            acc[value[0]] = value[1];
+            acc[value[0]] = value[1][0];
             return acc;
         }, {})
     );
