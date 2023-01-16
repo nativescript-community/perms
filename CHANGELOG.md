@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.22](https://github.com/nativescript-community/perms/compare/v2.2.21...v2.2.22) (2023-01-16)
+
+
+### Bug Fixes
+
+* `checkMultiple` fix ([db18227](https://github.com/nativescript-community/perms/commit/db1822759015b3a4992b875618b61075989ffebc))
+
+
+
+
+
 ## [2.2.21](https://github.com/nativescript-community/perms/compare/v2.2.20...v2.2.21) (2022-12-09)
 
 
