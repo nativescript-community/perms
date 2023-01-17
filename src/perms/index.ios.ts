@@ -90,12 +90,12 @@ export namespace PermissionsIOS {
             //         });
             // }
         }
-        export function request(type): Promise<[Status, boolean]> {
+        export async function request(type): Promise<[Status, boolean]> {
             const status = getStatusForType(type);
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'NSPLocation request', type, status);
             }
-            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
+            if (status[0] === Status.Undetermined || status[0] === Status.Denied || (type === 'always' && !status[1])) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
@@ -116,12 +116,10 @@ export namespace PermissionsIOS {
                                 }
                                 if (locationManager) {
                                     locationManager.delegate = null;
-                                    locationManager = null;
+                                    // locationManager = null;
                                 }
                                 const rStatus = getStatusFromCLAuthorizationStatus(status, type);
                                 resolve(rStatus);
-                                // } else {
-                                // reject('kCLAuthorizationStatusNotDetermined');
                             }
                         }
                     };
@@ -143,16 +141,12 @@ export namespace PermissionsIOS {
                         }
                         if (locationManager) {
                             locationManager.delegate = null;
-                            locationManager = null;
+                            // locationManager = null;
                         }
                     }
                 });
             } else {
-                // if (CLLocationManager.authorizationStatus() === CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse && type === 'always') {
-                //     return Promise.resolve(Status.Denied);
-                // } else {
-                return Promise.resolve(status);
-                // }
+                return status;
             }
         }
     }
