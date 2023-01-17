@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.23](https://github.com/nativescript-community/perms/compare/v2.2.22...v2.2.23) (2023-01-17)
+
+
+### Bug Fixes
+
+* **ios:** correctly handle check/request for location with always type ([a2bc977](https://github.com/nativescript-community/perms/commit/a2bc9773a77b32948b3f11e95ef2cb19f0642beb))
+
+
+
+
+
 ## [2.2.22](https://github.com/nativescript-community/perms/compare/v2.2.21...v2.2.22) (2023-01-16)
 
 
