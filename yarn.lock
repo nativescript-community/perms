@@ -2376,7 +2376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nativescript-community/perms@2.2.21, @nativescript-community/perms@workspace:packages/perms":
+"@nativescript-community/perms@*, @nativescript-community/perms@workspace:packages/perms":
   version: 0.0.0-use.local
   resolution: "@nativescript-community/perms@workspace:packages/perms"
   languageName: unknown
@@ -2451,16 +2451,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nativescript-community/template-snippet@workspace:demo-snippets"
   dependencies:
-    "@nativescript-community/perms": 2.2.21
+    "@nativescript-community/perms": "*"
   languageName: unknown
   linkType: soft
 
 "@nativescript-community/template-snippet@file:demo-snippets::locator=root-workspace-0b6124%40workspace%3A.":
   version: 0.0.1
-  resolution: "@nativescript-community/template-snippet@file:demo-snippets#demo-snippets::hash=f4966a&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@nativescript-community/template-snippet@file:demo-snippets#demo-snippets::hash=8e137d&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
-    "@nativescript-community/perms": 2.2.21
-  checksum: 11af1c7627861c44b5cf7a16446f968e4e8adc0b95a7bc8312024f943cad7f993a780beaec34f8150010d067eb5e4096e8286c14d717f58cab6c27e071f19e59
+    "@nativescript-community/perms": "*"
+  checksum: 54a2ffc08cd3ba3d89725303fb7aa109fe89aea07a5a1da69d331375a60281288ccac6cef6cae98fcf649c08abcd602ed4c442c435f03925da59467872eae010
   languageName: node
   linkType: hard
 
