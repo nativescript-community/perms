@@ -754,8 +754,9 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
         const keys = Object.keys(permission) as IOSPermissionTypes[];
 
         for (let index = 0; index < keys.length; index++) {
-            const res = await request(keys[index], options[keys[index]]);
-            grantedPermissions[permission[index]] = res[0];
+            const perm = keys[index];
+            const res = await request(perm, permission[perm]);
+            grantedPermissions[perm] = res[0];
         }
         //@ts-ignore
         return grantedPermissions;
