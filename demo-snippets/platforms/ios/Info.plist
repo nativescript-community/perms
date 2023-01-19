@@ -50,7 +50,25 @@
   <array>
     <string>audio</string>
   </array>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>The Audio Recorder needs to access your Microphone to record.</string>
+  <key>NSCameraUsageDescription</key>
+    <string>permission</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>permission</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>permission</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>permission</string>
+    <key>NSMotionUsageDescription</key>
+    <string>permission</string>
+    <key>NSFaceIDUsageDescripction</key>
+    <string>permission</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>permission</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>permission</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>permission</string>
+    <key>NSContactsUsageDescription</key>
+    <string>permission</string>
 </dict>
 </plist>
