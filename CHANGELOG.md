@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.24](https://github.com/nativescript-community/perms/compare/v2.2.23...v2.2.24) (2023-01-19)
+
+
+### Bug Fixes
+
+* **ios:** check for multiple permissions fix ([fd3c774](https://github.com/nativescript-community/perms/commit/fd3c774cff46ff788b9bc36059097f95c2765627))
+
+
+
+
+
 ## [2.2.23](https://github.com/nativescript-community/perms/compare/v2.2.22...v2.2.23) (2023-01-17)
 
 
