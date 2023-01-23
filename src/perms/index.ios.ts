@@ -1,5 +1,5 @@
 import { Device, Trace, Utils } from '@nativescript/core';
-import { CheckOptions, Permissions as PermissionsType, RequestOptions } from '.';
+import { CheckOptions, MultiResult, ObjectPermissions, ObjectPermissionsRest, PermissionOptions, Permissions as PermissionsType, RequestOptions } from '.';
 import { CLog, CLogTypes } from './index.common';
 export * from './index.common';
 
@@ -90,12 +90,12 @@ export namespace PermissionsIOS {
             //         });
             // }
         }
-        export function request(type): Promise<[Status, boolean]> {
+        export async function request(type): Promise<[Status, boolean]> {
             const status = getStatusForType(type);
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'NSPLocation request', type, status);
             }
-            if (status[0] === Status.Undetermined || status[0] === Status.Denied) {
+            if (status[0] === Status.Undetermined || status[0] === Status.Denied || (type === 'always' && !status[1])) {
                 return new Promise((resolve, reject) => {
                     if (!locationManager) {
                         locationManager = CLLocationManager.new();
@@ -116,12 +116,10 @@ export namespace PermissionsIOS {
                                 }
                                 if (locationManager) {
                                     locationManager.delegate = null;
-                                    locationManager = null;
+                                    // locationManager = null;
                                 }
                                 const rStatus = getStatusFromCLAuthorizationStatus(status, type);
                                 resolve(rStatus);
-                                // } else {
-                                // reject('kCLAuthorizationStatusNotDetermined');
                             }
                         }
                     };
@@ -143,16 +141,12 @@ export namespace PermissionsIOS {
                         }
                         if (locationManager) {
                             locationManager.delegate = null;
-                            locationManager = null;
+                            // locationManager = null;
                         }
                     }
                 });
             } else {
-                // if (CLLocationManager.authorizationStatus() === CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse && type === 'always') {
-                //     return Promise.resolve(Status.Denied);
-                // } else {
-                return Promise.resolve(status);
-                // }
+                return status;
             }
         }
     }
@@ -705,6 +699,9 @@ const DEFAULTS = {
 };
 
 type IOSPermissionTypes = `${PermissionsIOS.NSType}`;
+type ObjectIOSPermissionsRest = {
+    [key in IOSPermissionTypes]: PermissionOptions;
+};
 const permissionTypes = Object.values(PermissionsIOS.NSType) as IOSPermissionTypes[];
 
 export function canOpenSettings() {
@@ -757,8 +754,9 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
         const keys = Object.keys(permission) as IOSPermissionTypes[];
 
         for (let index = 0; index < keys.length; index++) {
-            const res = await request(keys[index], options[keys[index]]);
-            grantedPermissions[permission[index]] = res[0];
+            const perm = keys[index];
+            const res = await request(perm, permission[perm]);
+            grantedPermissions[perm] = res[0];
         }
         //@ts-ignore
         return grantedPermissions;
@@ -789,12 +787,14 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
     return PermissionsIOS.requestPermission(permission, type || DEFAULTS[permission]);
 }
 
-export function checkMultiple(permissions: PermissionsType[]) {
-    return Promise.all(permissions.map((permission) => this.check(permission))).then((result) =>
-        result.reduce((acc, value, index) => {
-            const name = permissions[index];
-            acc[name] = value;
+export function checkMultiple<T extends Partial<ObjectIOSPermissionsRest>>(permissions: T): Promise<MultipleResult> {
+    if (Trace.isEnabled()) {
+        CLog(CLogTypes.info, 'checkMultiple', permissions);
+    }
+    return Promise.all(Object.keys(permissions).map((permission) => check(permission as any, permissions[permission]).then((r) => [permission, r]))).then((result) =>
+        result.reduce((acc, value: [string, [PermissionsIOS.Status, boolean]], index) => {
+            acc[value[0]] = value[1][0];
             return acc;
-        }, {})
+        }, {} as MultipleResult)
     );
 }
