@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.25](https://github.com/nativescript-community/perms/compare/v2.2.24...v2.2.25) (2023-01-23)
+
+
+### Bug Fixes
+
+* improved native-api-usage ([107750d](https://github.com/nativescript-community/perms/commit/107750df8f3f991bbc665ea8d782f90e41762ca1))
+
+
+
+
+
 ## [2.2.24](https://github.com/nativescript-community/perms/compare/v2.2.23...v2.2.24) (2023-01-19)
 
 
