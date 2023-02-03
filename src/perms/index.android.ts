@@ -28,6 +28,8 @@ const NativePermissionsTypes: PermissionsType[] = [
     'event',
     'storage',
     'photo',
+    'video',
+    'audio',
     'callPhone',
     'readSms',
     'receiveSms',
@@ -96,7 +98,22 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
             return result;
         }
         case 'photo': {
-            return ['android.permission.WRITE_EXTERNAL_STORAGE'];
+            if (getAndroidSDK() >= ANDROID13) {
+                return ['android.permission.READ_MEDIA_IMAGES'];
+            }
+            return ['android.permission.READ_EXTERNAL_STORAGE'];
+        }
+        case 'video': {
+            if (getAndroidSDK() >= ANDROID13) {
+                return ['android.permission.READ_MEDIA_VIDEO'];
+            }
+            return ['android.permission.READ_EXTERNAL_STORAGE'];
+        }
+        case 'audio': {
+            if (getAndroidSDK() >= ANDROID13) {
+                return ['android.permission.READ_MEDIA_AUDIO'];
+            }
+            return ['android.permission.READ_EXTERNAL_STORAGE'];
         }
         case 'callPhone': {
             return ['android.permission.CALL_PHONE'];
