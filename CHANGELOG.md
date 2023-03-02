@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/nativescript-community/perms/compare/v2.2.25...v2.3.0) (2023-03-02)
+
+
+### Bug Fixes
+
+* **android:** removed unwanted log ([c6e154e](https://github.com/nativescript-community/perms/commit/c6e154e081706b837db943ed2cc83ad21259f364))
+
+
+### Features
+
+* **android:** add granular permissions for accessing photo, video, and audio ([747f6c8](https://github.com/nativescript-community/perms/commit/747f6c85e9b94eb9cf29a144f85f35fa8ea24195))
+
+
+
+
+
 ## [2.2.25](https://github.com/nativescript-community/perms/compare/v2.2.24...v2.2.25) (2023-01-23)
 
 
