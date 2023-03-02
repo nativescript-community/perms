@@ -46,7 +46,6 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
             const result = [];
             const coarse = options?.coarse ?? true;
             const precise = options?.precise ?? true;
-            console.log('coarse', coarse, options);
             if (coarse !== false) {
                 result.push('android.permission.ACCESS_COARSE_LOCATION');
             }
