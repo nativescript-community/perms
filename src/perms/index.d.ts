@@ -14,6 +14,8 @@ export type Permissions =
     | 'camera'
     | 'microphone'
     | 'photo'
+    | 'video'
+    | 'audio'
     | 'contacts'
     | 'event'
     | 'reminder'
