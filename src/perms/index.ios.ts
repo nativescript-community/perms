@@ -104,23 +104,26 @@ export namespace PermissionsIOS {
                         locationManagerDelegate = CLLocationManagerDelegateImpl.new().initDelegate();
                         locationManager.delegate = locationManagerDelegate;
                     }
+                    function cleanup() {
+                        if (locationManagerDelegate) {
+                            locationManagerDelegate.removeSubDelegate(subD);
+                            locationManagerDelegate = null;
+                        }
+                        if (locationManager) {
+                            locationManager.delegate = null;
+                            // locationManager = null;
+                        }
+                    }
                     const subD = {
                         locationManagerDidChangeAuthorizationStatus: (manager, status: CLAuthorizationStatus) => {
                             if (Trace.isEnabled()) {
                                 CLog(CLogTypes.info, 'locationManagerDidChangeAuthorizationStatus', status);
                             }
                             if (status !== CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined) {
-                                if (locationManagerDelegate) {
-                                    locationManagerDelegate.removeSubDelegate(subD);
-                                    locationManagerDelegate = null;
-                                }
-                                if (locationManager) {
-                                    locationManager.delegate = null;
-                                    // locationManager = null;
-                                }
                                 const rStatus = getStatusFromCLAuthorizationStatus(status, type);
                                 resolve(rStatus);
                             }
+                            cleanup();
                         }
                     };
                     locationManagerDelegate.addSubDelegate(subD);
@@ -135,14 +138,7 @@ export namespace PermissionsIOS {
                         }
                     } catch (e) {
                         reject(e);
-                        if (locationManagerDelegate) {
-                            locationManagerDelegate.removeSubDelegate(subD);
-                            locationManagerDelegate = null;
-                        }
-                        if (locationManager) {
-                            locationManager.delegate = null;
-                            // locationManager = null;
-                        }
+                        cleanup();
                     }
                 });
             } else {
@@ -360,13 +356,14 @@ export namespace PermissionsIOS {
                         CLog(CLogTypes.info, 'NSPMotion request', status);
                     }
                     activityManager.queryActivityStartingFromDateToDateToQueueWithHandler(NSDate.distantPast, new Date(), motionActivityQueue, (activities, error) => {
-                        if (error) {
-                            reject(error);
-                        }
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'NSPMotion got response', activities, error, status, getStatus());
                         }
-                        resolve();
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve();
+                        }
                         activityManager = null;
                         motionActivityQueue = null;
                     });
