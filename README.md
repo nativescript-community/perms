@@ -97,6 +97,8 @@ The current supported permissions are:
 | Camera             | `camera`            | ✔  | ✔       |
 | Microphone         | `microphone`        | ✔  | ✔       |
 | Photos             | `photo`             | ✔  | ✔       |
+| Videos             | `video`             | ❌ | ✔ (api >= 33)       |
+| Audio              | `audio`             | ❌ | ✔ (api >= 33)       |
 | Contacts           | `contacts`          | ✔  | ✔       |
 | Events             | `event`             | ✔  | ✔       |
 | Bluetooth          | `bluetooth`         | ✔  | ✔(api >= 31)      |
