@@ -44,7 +44,7 @@ The current supported permissions are:
 | Events             | `event`             | ✔  | ✔       |
 | Bluetooth          | `bluetooth`         | ✔  | ✔(api >= 31)      |
 | Reminders          | `reminder`          | ✔  | ❌      |
-| Push Notifications | `notification`      | ✔  | ❌      |
+| Push Notifications | `notification`      | ✔  | ✔ (api >= 33)       |
 | Background Refresh | `backgroundRefresh` | ✔  | ❌      |
 | Speech Recognition | `speechRecognition` | ✔  | ❌      |
 | Media Library      | `mediaLibrary`      | ✔  | ❌      |
