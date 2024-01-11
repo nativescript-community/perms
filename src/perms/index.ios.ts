@@ -304,6 +304,9 @@ export namespace PermissionsIOS {
                 photoStatus = PHPhotoLibrary.authorizationStatus();
             }
             switch (photoStatus) {
+                case PHAuthorizationStatus.Limited:
+                    status = Status.Limited;
+                    break;
                 case PHAuthorizationStatus.Authorized:
                     status = Status.Authorized;
                     break;
