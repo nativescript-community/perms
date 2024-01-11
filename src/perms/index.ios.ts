@@ -649,7 +649,7 @@ export namespace PermissionsIOS {
             case NSType.Bluetooth:
                 return NSPBluetooth.request();
             case NSType.Notification:
-                let types: UIUserNotificationType;
+                let types: number;
                 const typeStrings: string[] = json;
                 const osVersion = parseFloat(Device.osVersion);
                 if (osVersion >= 10) {
@@ -662,8 +662,28 @@ export namespace PermissionsIOS {
                     if (typeStrings.indexOf('sound') !== -1) {
                         types = types | UNAuthorizationOptions.Sound;
                     }
-                    if (typeStrings.indexOf('providesAppNotificationSettings') !== -1 && parseFloat(Device.osVersion) >= 12) {
-                        types = types | UNAuthorizationOptions.ProvidesAppNotificationSettings;
+                    if (typeStrings.indexOf('carPlay') !== -1) {
+                        types = types | UNAuthorizationOptions.CarPlay;
+                    }
+                    if (osVersion >= 12) {
+                        if (typeStrings.indexOf('providesAppNotificationSettings') !== -1) {
+                            types = types | UNAuthorizationOptions.ProvidesAppNotificationSettings;
+                        }
+                        if (typeStrings.indexOf('criticalAlert') !== -1) {
+                            types = types | UNAuthorizationOptions.CriticalAlert;
+                        }
+                        if (typeStrings.indexOf('provisional') !== -1) {
+                            types = types | UNAuthorizationOptions.Provisional;
+                        }
+
+                        if (osVersion >= 13 && osVersion <= 15) {
+                            if (typeStrings.indexOf('annoucement') !== -1) {
+                                types = types | UNAuthorizationOptions.Announcement;
+                            }
+                            if (typeStrings.indexOf('timeSensitive') !== -1) {
+                                types = types | UNAuthorizationOptions.TimeSensitive;
+                            }
+                        }
                     }
                 } else {
                     if (typeStrings.indexOf('alert') !== -1) {
