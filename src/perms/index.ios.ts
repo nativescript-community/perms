@@ -122,8 +122,8 @@ export namespace PermissionsIOS {
                             if (status !== CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined) {
                                 const rStatus = getStatusFromCLAuthorizationStatus(status, type);
                                 resolve(rStatus);
+                                cleanup();
                             }
-                            cleanup();
                         }
                     };
                     locationManagerDelegate.addSubDelegate(subD);
