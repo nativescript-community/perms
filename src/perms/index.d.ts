@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/unified-signatures */
 /* eslint-disable no-redeclare */
 export type Status = 'authorized' | 'denied' | 'limited' | 'restricted' | 'undetermined' | 'never_ask_again';
-export const PermsTraceCategory = 'NativescriptPerms';
+
+export * from './index.common';
 
 export type AndroidPermissions<T = Exclude<keyof typeof android.Manifest.permission, keyof typeof java.lang.Object>> = {
     [K in keyof T]: T[K] extends string ? T : never;
