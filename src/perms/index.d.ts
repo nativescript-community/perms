@@ -78,3 +78,4 @@ export function request<T extends Partial<ObjectPermissions | ObjectPermissionsR
 export function request<T extends string>(permission: T): Promise<Result>;
 
 export function checkMultiple<T extends Partial<ObjectPermissionsRest>>(permissions: T): Promise<MultiResult>;
+export function shouldShowRequestPermissionRationale<T extends string>(permission: T): Promise<boolean>;

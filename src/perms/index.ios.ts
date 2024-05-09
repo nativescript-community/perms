@@ -818,3 +818,7 @@ export function checkMultiple<T extends Partial<ObjectIOSPermissionsRest>>(permi
         }, {} as MultipleResult)
     );
 }
+
+export function shouldShowRequestPermissionRationale(permission) {
+    return Promise.resolve(false);
+}

@@ -317,7 +317,7 @@ async function requestMultiplePermissions(permissions: string[]): Promise<{ [per
     });
 }
 
-function shouldShowRequestPermissionRationale(permission: string | string[]) {
+export function shouldShowRequestPermissionRationale(permission: string | string[]) {
     if (getAndroidSDK() < MARSHMALLOW) {
         return Promise.resolve(false);
     }
