@@ -7,6 +7,7 @@
                     <Button text="checkMult" @tap="checkMultiplePerms" />
                     <Button text="reqSingle" @tap="requestSinglePerm" />
                     <Button text="reqMult" @tap="requestMultiplePerms" />
+                    <Button text="settings" @tap="openSettings" />
             </WrapLayout>
         <ListView ref="listView" :items="permissions" rowHeight="70" row="1">
             <v-template>
@@ -23,7 +24,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Permissions, check, checkMultiple, request } from '@nativescript-community/perms';
+import { Permissions, check, checkMultiple, openSettings, request } from '@nativescript-community/perms';
 import { AndroidActivityResultEventData, AndroidApplication, Application, Device, Utils } from '@nativescript/core';
 const sdkVersion = parseInt(Device.sdkVersion, 10);
 export default Vue.extend({
@@ -166,6 +167,13 @@ export default Vue.extend({
                 .then((response) => {
                     console.log('[TCL] ~ file: Home.vue:66 ~ .then ~ response', response)
                 });
+        },
+        async openSettings() {
+            try {
+                await openSettings()
+            } catch (error) {
+                console.error(error, error.stack)
+            }
         },
         requestMultiplePerms() {
             const permissions = {
