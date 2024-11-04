@@ -1,5 +1,5 @@
-import { Device, Trace, Utils } from '@nativescript/core';
-import { CheckOptions, MultiResult, ObjectPermissions, ObjectPermissionsRest, PermissionOptions, Permissions as PermissionsType, RequestOptions, Result, IStatus } from '.';
+import { Application, Device, Trace, Utils } from '@nativescript/core';
+import { CheckOptions, MultiResult, ObjectPermissions, ObjectPermissionsRest, PermissionOptions, Permissions as PermissionsType, RequestOptions, Result } from '.';
 import { CLog, CLogTypes, Status } from './index.common';
 export * from './index.common';
 
@@ -556,17 +556,43 @@ export namespace PermissionsIOS {
 
     export function openSettings() {
         return new Promise((resolve, reject) => {
+            if (!canOpenSettings()) {
+                reject(new Error('cant_open_settings'));
+            }
             const center = NSNotificationCenter.defaultCenter;
-            const observer = function (notif) {
+            let timeoutHandler;
+            function onActive(notif) {
                 resolve(true);
-                center.removeObserver(observer);
-            };
-            center.addObserverForNameObjectQueueUsingBlock(UIApplicationDidBecomeActiveNotification, null, null, observer);
+                Application.ios.removeNotificationObserver(observer, UIApplicationDidBecomeActiveNotification);
+                if (timeoutHandler) {
+                    clearTimeout(timeoutHandler);
+                    timeoutHandler = null;
+                }
+            }
+            function onResignActive(notif) {
+                Application.ios.removeNotificationObserver(observer1, UIApplicationWillResignActiveNotification);
+                if (timeoutHandler) {
+                    clearTimeout(timeoutHandler);
+                    timeoutHandler = null;
+                }
+            }
+
+            console.log('openSettings', UIApplicationOpenSettingsURLString);
+            const observer = Application.ios.addNotificationObserver(UIApplicationDidBecomeActiveNotification, onActive);
+            const observer1 = Application.ios.addNotificationObserver(UIApplicationWillResignActiveNotification, onResignActive);
             UIApplication.sharedApplication.openURL(NSURL.URLWithString(UIApplicationOpenSettingsURLString));
+            timeoutHandler = setTimeout(() => {
+                Application.ios.removeNotificationObserver(observer, UIApplicationDidBecomeActiveNotification);
+                Application.ios.removeNotificationObserver(observer1, UIApplicationWillResignActiveNotification);
+                timeoutHandler = null;
+                // something did not work let s cancel
+                reject(new Error('cant_open_settings'));
+            }, 1000);
         });
     }
     export function canOpenSettings() {
-        return Promise.resolve(UIApplicationOpenSettingsURLString !== null);
+        console.log('canOpenSettings', UIApplicationOpenSettingsURLString);
+        return Promise.resolve(!!UIApplicationOpenSettingsURLString);
     }
     export async function getPermissionStatus(type, json): Promise<Status> {
         let status: Status;
