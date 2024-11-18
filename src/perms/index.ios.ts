@@ -4,7 +4,6 @@ import { CLog, CLogTypes, Status } from './index.common';
 export * from './index.common';
 
 export namespace PermissionsIOS {
-    
     namespace NSPLocation {
         let status: Status = Status.Undetermined;
         function getStatusFromCLAuthorizationStatus(lStatus: CLAuthorizationStatus, type?: string): Status {
@@ -555,11 +554,10 @@ export namespace PermissionsIOS {
     }
 
     export function openSettings() {
-        return new Promise((resolve, reject) => {
-            if (!canOpenSettings()) {
+        return new Promise(async (resolve, reject) => {
+            if (!(await canOpenSettings())) {
                 reject(new Error('cant_open_settings'));
             }
-            const center = NSNotificationCenter.defaultCenter;
             let timeoutHandler;
             function onActive(notif) {
                 resolve(true);
@@ -577,7 +575,6 @@ export namespace PermissionsIOS {
                 }
             }
 
-            console.log('openSettings', UIApplicationOpenSettingsURLString);
             const observer = Application.ios.addNotificationObserver(UIApplicationDidBecomeActiveNotification, onActive);
             const observer1 = Application.ios.addNotificationObserver(UIApplicationWillResignActiveNotification, onResignActive);
             UIApplication.sharedApplication.openURLOptionsCompletionHandler(NSURL.URLWithString(UIApplicationOpenSettingsURLString), null, null);
@@ -590,9 +587,8 @@ export namespace PermissionsIOS {
             }, 1000);
         });
     }
-    export function canOpenSettings() {
-        console.log('canOpenSettings', UIApplicationOpenSettingsURLString);
-        return Promise.resolve(!!UIApplicationOpenSettingsURLString);
+    export async function canOpenSettings() {
+        return !!UIApplicationOpenSettingsURLString;
     }
     export async function getPermissionStatus(type, json): Promise<Status> {
         let status: Status;
@@ -748,6 +744,10 @@ export function canOpenSettings() {
 
 export function openSettings() {
     return PermissionsIOS.openSettings();
+}
+
+export function openNotificationSettings() {
+    return PermissionsIOS.canOpenSettings();
 }
 
 export function getTypes() {

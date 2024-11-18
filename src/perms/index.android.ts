@@ -1,7 +1,7 @@
 import { Application, Trace, Utils } from '@nativescript/core';
 import { AndroidActivityRequestPermissionsEventData } from '@nativescript/core/application';
 import { getBoolean, setBoolean } from '@nativescript/core/application-settings';
-import { CheckOptions, MultiResult, ObjectPermissions, ObjectPermissionsRest, Permissions as PermissionsType, RequestOptions, IStatus } from '.';
+import { CheckOptions, IStatus, MultiResult, ObjectPermissions, ObjectPermissionsRest, Permissions as PermissionsType, RequestOptions } from '.';
 import { CLog, CLogTypes, Status } from './index.common';
 import { SDK_VERSION } from '@nativescript/core/utils';
 
@@ -39,7 +39,7 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
     switch (permission) {
         case 'location': {
             const result = [];
-            const theOptions = options as RequestOptions<'location'>
+            const theOptions = options as RequestOptions<'location'>;
             if ((theOptions?.coarse ?? true) !== false) {
                 result.push('android.permission.ACCESS_COARSE_LOCATION');
             }
@@ -71,7 +71,7 @@ function getNativePermissions<T extends PermissionsType = PermissionsType>(permi
         }
         case 'storage': {
             const result = [];
-            const theOptions = options as RequestOptions<'storage'>
+            const theOptions = options as RequestOptions<'storage'>;
             // const manage = options?.manage?? true;
             if ((theOptions?.read ?? true) !== false) {
                 result.push('android.permission.READ_EXTERNAL_STORAGE');
@@ -313,15 +313,16 @@ function shouldShowRequestPermissionRationale(permission: string | string[]) {
     }
 }
 
-export function canOpenSettings() {
-    return Promise.resolve(true);
+export async function canOpenSettings() {
+    return true;
 }
 
+const SETTINGS_REQUEST = 5140;
 export function openSettings() {
     const activity = Application.android.foregroundActivity || Application.android.startActivity;
     return new Promise<void>((resolve, reject) => {
         const onActivityResultHandler = (data) => {
-            if (data.requestCode === 5140) {
+            if (data.requestCode === SETTINGS_REQUEST) {
                 Application.android.off(Application.android.activityResultEvent, onActivityResultHandler);
                 resolve();
             }
@@ -329,7 +330,32 @@ export function openSettings() {
         Application.android.on(Application.android.activityResultEvent, onActivityResultHandler);
         const intent = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(android.net.Uri.parse('package:' + activity.getPackageName()));
-        activity.startActivityForResult(intent, 5140);
+        activity.startActivityForResult(intent, SETTINGS_REQUEST);
+    });
+}
+const NOTIF_SETTINGS_REQUEST = 5141;
+export function openNotificationSettings() {
+    const activity = Application.android.foregroundActivity || Application.android.startActivity;
+    return new Promise<void>((resolve, reject) => {
+        const onActivityResultHandler = (data) => {
+            if (data.requestCode === NOTIF_SETTINGS_REQUEST) {
+                Application.android.off(Application.android.activityResultEvent, onActivityResultHandler);
+                resolve();
+            }
+        };
+
+        Application.android.on(Application.android.activityResultEvent, onActivityResultHandler);
+        const intent = new android.content.Intent();
+        if (SDK_VERSION >= 25) {
+            intent.setAction(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, activity.getPackageName());
+        } else {
+            intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            const uri = android.net.Uri.fromParts('package', activity.getPackageName(), null);
+            intent.setData(uri);
+        }
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivityForResult(intent, NOTIF_SETTINGS_REQUEST);
     });
 }
 
@@ -352,7 +378,7 @@ export async function check(permission: PermissionsType | string, options?: Chec
             const type = typeof options === 'string' ? options : options && options.type;
             if (type === 'always') {
                 const backAuthorized = await PermissionsAndroid.check('android.permission.ACCESS_BACKGROUND_LOCATION');
-                return backAuthorized?Status.Authorized:Status.Denied;
+                return backAuthorized ? Status.Authorized : Status.Denied;
             }
         }
         return Status.Authorized;
@@ -360,7 +386,7 @@ export async function check(permission: PermissionsType | string, options?: Chec
 
     return getDidAskOnce(permission).then((didAsk) => {
         if (didAsk) {
-            return shouldShowRequestPermissionRationale(perms).then((shouldShow) => shouldShow ? Status.Denied : Status.Restricted);
+            return shouldShowRequestPermissionRationale(perms).then((shouldShow) => (shouldShow ? Status.Denied : Status.Restricted));
         }
 
         return Status.Undetermined;
@@ -411,7 +437,7 @@ export function request(permission: PermissionsType | string | ObjectPermissions
         if (permissions.length > 1) {
             return Promise.all(permissions.map(setDidAskOnce)).then(() => result);
         }
-        return setDidAskOnce(permissions[0]).then(() =>result);
+        return setDidAskOnce(permissions[0]).then(() => result);
     });
 }
 

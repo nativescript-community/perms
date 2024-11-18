@@ -65,6 +65,7 @@ export function check<T extends string>(permission: T): Promise<Result>;
 export function canOpenSettings(): Promise<boolean>;
 
 export function openSettings(): Promise<boolean>;
+export function openNotificationSettings(): Promise<boolean>;
 
 export function getTypes(): Permissions[];
 
