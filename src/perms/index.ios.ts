@@ -580,7 +580,7 @@ export namespace PermissionsIOS {
             console.log('openSettings', UIApplicationOpenSettingsURLString);
             const observer = Application.ios.addNotificationObserver(UIApplicationDidBecomeActiveNotification, onActive);
             const observer1 = Application.ios.addNotificationObserver(UIApplicationWillResignActiveNotification, onResignActive);
-            UIApplication.sharedApplication.openURL(NSURL.URLWithString(UIApplicationOpenSettingsURLString));
+            UIApplication.sharedApplication.openURLOptionsCompletionHandler(NSURL.URLWithString(UIApplicationOpenSettingsURLString), null, null);
             timeoutHandler = setTimeout(() => {
                 Application.ios.removeNotificationObserver(observer, UIApplicationDidBecomeActiveNotification);
                 Application.ios.removeNotificationObserver(observer1, UIApplicationWillResignActiveNotification);
