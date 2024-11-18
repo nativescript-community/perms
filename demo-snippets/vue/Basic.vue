@@ -2,22 +2,22 @@
     <Page>
         <ActionBar title="Extendedinfo Demo"> </ActionBar>
         <GridLayout rows="auto,*">
-            <WrapLayout> 
-                    <Button text="checkSingle" @tap="checkSinglePerm" />
-                    <Button text="checkMult" @tap="checkMultiplePerms" />
-                    <Button text="reqSingle" @tap="requestSinglePerm" />
-                    <Button text="reqMult" @tap="requestMultiplePerms" />
-                    <Button text="settings" @tap="openSettings" />
+            <WrapLayout>
+                <Button text="checkSingle" @tap="checkSinglePerm" />
+                <Button text="checkMult" @tap="checkMultiplePerms" />
+                <Button text="reqSingle" @tap="requestSinglePerm" />
+                <Button text="reqMult" @tap="requestMultiplePerms" />
+                <Button text="settings" @tap="openSettings" />
             </WrapLayout>
-        <ListView ref="listView" :items="permissions" rowHeight="70" row="1">
-            <v-template>
-                <GridLayout columns="*,auto,auto" padding="10" class="item" orientation="horizontal">
-                    <Label :text="item" fontSize="17" verticalAlignment="center"></Label>
-                    <Button col="1" text="check" fontSize="17" verticalAlignment="center" @tap="checkPermission(item)" />
-                    <Button col="2" text="request" fontSize="17" verticalAlignment="center" @tap="requestPermission(item)" />
-                </GridLayout>
-            </v-template>
-        </ListView>
+            <ListView ref="listView" :items="permissions" rowHeight="70" row="1">
+                <v-template>
+                    <GridLayout columns="*,auto,auto" padding="10" class="item" orientation="horizontal">
+                        <Label :text="item" fontSize="17" verticalAlignment="center"></Label>
+                        <Button col="1" text="check" fontSize="17" verticalAlignment="center" @tap="checkPermission(item)" />
+                        <Button col="2" text="request" fontSize="17" verticalAlignment="center" @tap="requestPermission(item)" />
+                    </GridLayout>
+                </v-template>
+            </ListView>
         </GridLayout>
     </Page>
 </template>
@@ -84,7 +84,7 @@ export default Vue.extend({
             }
         },
         async requestPermission(perm: Permissions | 'multiple' | 'manage') {
-            console.log('requestPermission', perm)
+            console.log('requestPermission', perm);
             try {
                 if (perm === 'manage') {
                     this.askForManagePermission();
@@ -144,48 +144,46 @@ export default Vue.extend({
         },
 
         checkSinglePerm() {
-            check('location', { type: 'always' })
-                .then((response) => {
-                    console.log('[TCL] ~ file: Home.vue:50 ~ .then ~ response', response)
-                });
+            check('location', { type: 'always' }).then((response) => {
+                console.log('[TCL] ~ file: Home.vue:50 ~ .then ~ response', response);
+            });
         },
         checkMultiplePerms() {
             const permissions = {
                 location: {},
-                contacts: {},
+                contacts: {}
             };
             checkMultiple(permissions)
                 .then((response) => {
-                    console.log('[TCL] ~ file: Home.vue:60 ~ .then ~ response', response)
+                    console.log('[TCL] ~ file: Home.vue:60 ~ .then ~ response', response);
                 })
                 .catch((error) => {
-                    console.log('[TCL] ~ file: Home.vue:63 ~ .catch ~ error', error)
+                    console.log('[TCL] ~ file: Home.vue:63 ~ .catch ~ error', error);
                 });
         },
         requestSinglePerm() {
-            request('location', { type: 'always' })
-                .then((response) => {
-                    console.log('[TCL] ~ file: Home.vue:66 ~ .then ~ response', response)
-                });
+            request('location', { type: 'always' }).then((response) => {
+                console.log('[TCL] ~ file: Home.vue:66 ~ .then ~ response', response);
+            });
         },
         async openSettings() {
             try {
-                await openSettings()
+                await openSettings();
             } catch (error) {
-                console.error(error, error.stack)
+                console.error(error, error.stack);
             }
         },
         requestMultiplePerms() {
             const permissions = {
                 location: { type: 'always' },
-                contacts: {},
+                contacts: {}
             };
             request(permissions)
                 .then((response) => {
-                    console.log('[TCL] ~ file: Home.vue:76 ~ .then ~ response', response)
+                    console.log('[TCL] ~ file: Home.vue:76 ~ .then ~ response', response);
                 })
                 .catch((error) => {
-                    console.log('[TCL] ~ file: Home.vue:63 ~ .catch ~ error', error)
+                    console.log('[TCL] ~ file: Home.vue:63 ~ .catch ~ error', error);
                 });
         }
     }
