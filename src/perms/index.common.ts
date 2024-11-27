@@ -1,15 +1,6 @@
 import { Trace } from '@nativescript/core';
-import type { MultiResult } from '.';
+import type { MultiResult, Result } from '.';
 export const PermsTraceCategory = 'NativescriptPerms';
-
-export enum Status {
-    Undetermined = 'undetermined',
-    Denied = 'denied',
-    Authorized = 'authorized',
-    Limited = 'limited',
-    Restricted = 'restricted',
-    NeverAskAgain = 'never_ask_again'
-}
 
 export enum CLogTypes {
     log = Trace.messageType.log,
@@ -22,10 +13,11 @@ export const CLog = (type: CLogTypes, ...args) => {
     Trace.write(args.map((a) => (a && typeof a === 'object' ? JSON.stringify(a) : a)).join(' '), PermsTraceCategory, type);
 };
 
-export function isPermResultAuthorized(r: MultiResult | Status) {
-    if (typeof r === 'object') {
-        const unauthorized = Object.keys(r).some((s) => r[s] !== Status.Authorized);
+export function isPermResultAuthorized(r: MultiResult | Result) {
+    if (Array.isArray(r)) {
+        return r[0] === 'authorized';
+    } else {
+        const unauthorized = Object.keys(r).some((s) => r[s] !== 'authorized');
         return !unauthorized;
     }
-    return r;
 }
