@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.6](https://github.com/nativescript-community/perms/compare/v2.3.5...v2.3.6) (2024-11-27)
+
+### Reverts
+
+* Revert "fix!: check/request will now return a `Status` result instead of of an array" ([48fc65e](https://github.com/nativescript-community/perms/commit/48fc65e4fec9d0ee714756de1c5b2b16608208ce))
+
 ## [2.3.5](https://github.com/nativescript-community/perms/compare/v2.3.4...v2.3.5) (2024-11-18)
 
 ### ⚠ BREAKING CHANGES
