@@ -1642,10 +1642,10 @@ __metadata:
 
 "@nativescript-community/template-snippet@file:demo-snippets::locator=root-workspace-0b6124%40workspace%3A.":
   version: 0.0.1
-  resolution: "@nativescript-community/template-snippet@file:demo-snippets#demo-snippets::hash=6d50dd&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@nativescript-community/template-snippet@file:demo-snippets#demo-snippets::hash=e96e86&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@nativescript-community/perms": "npm:*"
-  checksum: f1fa0a7ecdeacfca2acf6edd2b6dd0311d74e5caaaf893f1f2a739e9b213aa196db5f9a44ca801b439da6adaa667458e56719534a0aad1ed574add3f5425f62b
+  checksum: f9b0ea5598748606ac83b8efc8f287534dd5028d3a427c238f5029e98d2906b4c29245f0d82a3856e8370044dbfeafe4375b9c922fd26362f55639edf3296fd2
   languageName: node
   linkType: hard
 
@@ -14633,7 +14633,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
   version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=e012d7"
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=29ae49"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -14653,7 +14653,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A~5.4.5#optional!builtin<compat/typescript>":
   version: 5.4.5
-  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=e012d7"
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=29ae49"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
