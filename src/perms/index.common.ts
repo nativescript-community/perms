@@ -27,5 +27,5 @@ export function isPermResultAuthorized(r: MultiResult | Status) {
         const unauthorized = Object.keys(r).some((s) => r[s] !== Status.Authorized);
         return !unauthorized;
     }
-    return r;
+    return r === Status.Authorized;
 }
