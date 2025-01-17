@@ -36,7 +36,6 @@ export type Permissions =
     | AndroidPermissionsString;
 
 export interface LocationOptions {
-    type: string;
     coarse?: boolean;
     precise?: boolean;
     background?: boolean;
