@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/nativescript-community/perms/compare/v2.3.6...v3.0.0) (2025-01-17)
+
+### ⚠ BREAKING CHANGES
+
+* check/request will now return a `Status` result instead of of an array
+
+### Bug Fixes
+
+* check/request will now return a `Status` result instead of of an array ([e3651e5](https://github.com/nativescript-community/perms/commit/e3651e579a0ba38b7b0bac5f4665ef2d62d982e7))
+
 ## [2.3.6](https://github.com/nativescript-community/perms/compare/v2.3.5...v2.3.6) (2024-11-27)
 
 ### Reverts
