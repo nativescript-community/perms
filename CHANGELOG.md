@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/nativescript-community/perms/compare/v3.0.0...v3.0.1) (2025-01-17)
+
+### Bug Fixes
+
+* `isPermResultAuthorized` fix ([33a02cd](https://github.com/nativescript-community/perms/commit/33a02cd4f67c96e65ff3b78d1a6eb0da82856a1c))
+
 ## [3.0.0](https://github.com/nativescript-community/perms/compare/v2.3.6...v3.0.0) (2025-01-17)
 
 ### ⚠ BREAKING CHANGES
