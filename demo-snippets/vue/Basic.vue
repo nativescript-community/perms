@@ -3,9 +3,7 @@
         <ActionBar title="Extendedinfo Demo"> </ActionBar>
         <GridLayout rows="auto,*">
             <WrapLayout>
-                <Button text="checkSingle" @tap="checkSinglePerm" />
                 <Button text="checkMult" @tap="checkMultiplePerms" />
-                <Button text="reqSingle" @tap="requestSinglePerm" />
                 <Button text="reqMult" @tap="requestMultiplePerms" />
                 <Button text="settings" @tap="openSettings" />
                 <Button text="notif settings" @tap="openNotificationSettings" />
@@ -32,7 +30,6 @@ export default Vue.extend({
     data() {
         return {
             permissions: [
-                ,
                 'location',
                 'camera',
                 'microphone',
@@ -73,10 +70,10 @@ export default Vue.extend({
         async checkPermission(perm: Permissions | 'multiple') {
             try {
                 if (perm === 'multiple') {
-                    const result = await checkMultiple({ location: { coarse: false, type: 'always' }, storage: { manage: true } });
+                    const result = await checkMultiple({ location: { coarse: false, background: true }, storage: { manage: true } });
                     alert(JSON.stringify(result));
                 } else {
-                    const result = await check(perm, { type: 'none' });
+                    const result = await check(perm, { background: true });
                     alert(JSON.stringify(result));
                 }
             } catch (err) {
@@ -106,7 +103,7 @@ export default Vue.extend({
                     //         service.createNotificationChannel(channel);
                     //     }
                     // }
-                    const result = await request(perm, { type: 'always' });
+                    const result = await request(perm, { background:true });
                     alert(JSON.stringify(result));
                 }
             } catch (err) {
@@ -145,7 +142,7 @@ export default Vue.extend({
         },
 
         checkSinglePerm() {
-            check('location', { type: 'always' }).then((response) => {
+            check('location', { background: true }).then((response) => {
                 console.log('[TCL] ~ file: Home.vue:50 ~ .then ~ response', response);
             });
         },
@@ -163,7 +160,7 @@ export default Vue.extend({
                 });
         },
         requestSinglePerm() {
-            request('location', { type: 'always' }).then((response) => {
+            request('location', { background: true }).then((response) => {
                 console.log('[TCL] ~ file: Home.vue:66 ~ .then ~ response', response);
             });
         },
@@ -183,7 +180,7 @@ export default Vue.extend({
         },
         requestMultiplePerms() {
             const permissions = {
-                location: { type: 'always' },
+                location: { background:true },
                 contacts: {}
             };
             request(permissions)

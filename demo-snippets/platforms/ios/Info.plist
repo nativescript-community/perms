@@ -70,5 +70,7 @@
     <string>permission</string>
     <key>NSContactsUsageDescription</key>
     <string>permission</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>permission</string>
 </dict>
 </plist>
