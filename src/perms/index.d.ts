@@ -69,13 +69,13 @@ export function openNotificationSettings(): Promise<boolean>;
 export function getTypes(): Permissions[];
 
 export interface MultiResult {
-    [k: Permissions | string]: Status;
+    [k: Permissions | string]: IStatus;
 }
-export type Result<T> = T extends any[] ? MultipleResult : Status;
+export type Result<T> = T extends any[] ? MultipleResult : IStatus;
 
 export type RequestOptions<T extends Permissions = Permissions> = T extends keyof ObjectPermissions ? ObjectPermissions[T] : any;
-export function request<T extends Permissions>(permission: T, options?: RequestOptions<T>): Promise<Status>;
+export function request<T extends Permissions>(permission: T, options?: RequestOptions<T>): Promise<IStatus>;
 export function request<T extends Partial<ObjectPermissions | ObjectPermissionsRest>>(permission: T): Promise<MultiResult>;
-export function request<T extends string>(permission: T): Promise<Status>;
+export function request<T extends string>(permission: T): Promise<IStatus>;
 
 export function checkMultiple<T extends Partial<ObjectPermissionsRest>>(permissions: T): Promise<MultiResult>;
