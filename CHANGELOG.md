@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/nativescript-community/perms/compare/v3.0.2...v3.0.3) (2025-01-27)
+
+### Bug Fixes
+
+* another typings fix ([0883a67](https://github.com/nativescript-community/perms/commit/0883a6742f6920647c3cd57c097ac542745e0ea1))
+
 ## [3.0.2](https://github.com/nativescript-community/perms/compare/v3.0.1...v3.0.2) (2025-01-23)
 
 ### Bug Fixes
