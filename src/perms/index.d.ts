@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unified-signatures */
 /* eslint-disable no-redeclare */
-export type IStatus = 'authorized' | 'denied' | 'limited' | 'restricted' | 'undetermined' | 'never_ask_again';
 
+import { Status } from './index.common';
 export * from './index.common';
 
 export type AndroidPermissions<T = Exclude<keyof typeof android.Manifest.permission, keyof typeof java.lang.Object>> = {
@@ -69,13 +69,13 @@ export function openNotificationSettings(): Promise<boolean>;
 export function getTypes(): Permissions[];
 
 export interface MultiResult {
-    [k: Permissions | string]: IStatus;
+    [k: Permissions | string]: Status;
 }
-export type Result<T> = T extends any[] ? MultipleResult : IStatus;
+export type Result<T> = T extends any[] ? MultipleResult : Status;
 
 export type RequestOptions<T extends Permissions = Permissions> = T extends keyof ObjectPermissions ? ObjectPermissions[T] : any;
-export function request<T extends Permissions>(permission: T, options?: RequestOptions<T>): Promise<IStatus>;
+export function request<T extends Permissions>(permission: T, options?: RequestOptions<T>): Promise<Status>;
 export function request<T extends Partial<ObjectPermissions | ObjectPermissionsRest>>(permission: T): Promise<MultiResult>;
-export function request<T extends string>(permission: T): Promise<IStatus>;
+export function request<T extends string>(permission: T): Promise<Status>;
 
 export function checkMultiple<T extends Partial<ObjectPermissionsRest>>(permissions: T): Promise<MultiResult>;

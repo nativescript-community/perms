@@ -784,7 +784,6 @@ export async function check(permission: IOSPermissionTypes, options?: CheckOptio
 
     let type;
 
-
     return PermissionsIOS.getPermissionStatus(permission, options || DEFAULTS[permission]);
 }
 
