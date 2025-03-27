@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.4](https://github.com/nativescript-community/perms/compare/v3.0.3...v3.0.4) (2025-03-27)
+
+### Bug Fixes
+
+* add missing case statement for limited contact access ([53c46e4](https://github.com/nativescript-community/perms/commit/53c46e40db089cb41f1f5f09dec90ac5cabb56e8)), closes [#33](https://github.com/nativescript-community/perms/issues/33)
+
 ## [3.0.3](https://github.com/nativescript-community/perms/compare/v3.0.2...v3.0.3) (2025-01-27)
 
 ### Bug Fixes
