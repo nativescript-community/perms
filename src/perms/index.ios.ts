@@ -828,3 +828,9 @@ export function checkMultiple<T extends Partial<ObjectIOSPermissionsRest>>(permi
         }, {} as MultiResult)
     );
 }
+export function hasExactAlarmPermission(context = Utils.android.getApplicationContext()) {
+    return true;
+}
+export async function requestExactAlarmPermission() {
+    return true;
+}

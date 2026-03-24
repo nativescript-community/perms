@@ -28,7 +28,8 @@ const NativePermissionsTypes: PermissionsType[] = [
     'receiveSms',
     'bluetoothScan',
     'bluetoothConnect',
-    'bluetooth'
+    'bluetooth',
+    'exactAlarm'
 ];
 
 function getNativePermissions<T extends PermissionsType = PermissionsType>(permission: T | string, options?: RequestOptions<T>) {
@@ -316,12 +317,39 @@ export async function canOpenSettings() {
     return true;
 }
 
+const EXACT_ALARM_REQUEST = 5140;
+export function hasExactAlarmPermission(context = Utils.android.getApplicationContext()) {
+    if (SDK_VERSION >= 31) {
+        const alarmManager = context.getSystemService(android.content.Context.ALARM_SERVICE) as android.app.AlarmManager;
+        return alarmManager.canScheduleExactAlarms();
+    }
+    return true;
+}
+export async function requestExactAlarmPermission() {
+    if (SDK_VERSION >= 31) {
+        const activity = Application.android.foregroundActivity || Application.android.startActivity;
+        return new Promise<boolean>((resolve, reject) => {
+            const onActivityResultHandler = (data) => {
+                if (data.requestCode === EXACT_ALARM_REQUEST) {
+                    Application.android.off(Application.android.activityResultEvent, onActivityResultHandler);
+                    resolve(hasExactAlarmPermission());
+                }
+            };
+            Application.android.on(Application.android.activityResultEvent, onActivityResultHandler);
+            const intent = new android.content.Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            intent.setData(android.net.Uri.parse('package:' + activity.getPackageName()));
+            activity.startActivityForResult(intent, EXACT_ALARM_REQUEST);
+        });
+    }
+    return true;
+}
+
 const SETTINGS_REQUEST = 5140;
 export function openSettings() {
     const activity = Application.android.foregroundActivity || Application.android.startActivity;
     return new Promise<void>((resolve, reject) => {
         const onActivityResultHandler = (data) => {
-            if (data.requestCode === 5140) {
+            if (data.requestCode === SETTINGS_REQUEST) {
                 Application.android.off(Application.android.activityResultEvent, onActivityResultHandler);
                 resolve();
             }

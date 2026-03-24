@@ -33,6 +33,7 @@ export type Permissions =
     | 'callPhone'
     | 'readSms'
     | 'receiveSms'
+    | 'exactAlarm'
     | AndroidPermissionsString;
 
 export interface LocationOptions {
@@ -65,6 +66,9 @@ export function canOpenSettings(): Promise<boolean>;
 
 export function openSettings(): Promise<boolean>;
 export function openNotificationSettings(): Promise<boolean>;
+
+export function hasExactAlarmPermission(): boolean;
+export function requestExactAlarmPermission(): Promise<boolean>;
 
 export function getTypes(): Permissions[];
 
