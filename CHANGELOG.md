@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.10](https://github.com/nativescript-community/perms/compare/v3.0.9...v3.0.10) (2026-03-24)
+
+**Note:** Version bump only for package perms
+
 ## [3.0.9](https://github.com/nativescript-community/perms/compare/v3.0.4...v3.0.9) (2026-03-24)
 
 ### Bug Fixes
