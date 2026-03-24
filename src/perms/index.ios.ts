@@ -469,6 +469,9 @@ export namespace PermissionsIOS {
         export function getStatus(): Status {
             const contactStatus = CNContactStore.authorizationStatusForEntityType(CNEntityType.Contacts);
             switch (contactStatus) {
+                case CNAuthorizationStatus.Limited:
+                    status = Status.Limited;
+                    break;
                 case CNAuthorizationStatus.Authorized:
                     status = Status.Authorized;
                     break;
