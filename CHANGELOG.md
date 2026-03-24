@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.9](https://github.com/nativescript-community/perms/compare/v3.0.4...v3.0.9) (2026-03-24)
+
+### Bug Fixes
+
+* hasExactAlarmPermission and requestExactAlarmPermission ([a05611f](https://github.com/nativescript-community/perms/commit/a05611f7a6c4262fa0837303a5da23ae92e3bc6f))
+
 ## [3.0.4](https://github.com/nativescript-community/perms/compare/v3.0.3...v3.0.4) (2025-03-27)
 
 ### Bug Fixes
