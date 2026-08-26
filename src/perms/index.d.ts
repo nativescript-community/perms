@@ -59,8 +59,8 @@ export type ObjectPermissionsRest = {
 };
 
 export type CheckOptions<T extends Permissions = Permissions> = T extends keyof ObjectPermissions ? ObjectPermissions[T] : any;
-export function check<T extends Permissions>(permission: T, options?: CheckOptions<T>): Promise<Result>;
-export function check<T extends string>(permission: T): Promise<Result>;
+export function check<T extends Permissions>(permission: T, options?: CheckOptions<T>): Promise<Status>;
+export function check<T extends string>(permission: T): Promise<Status>;
 
 export function canOpenSettings(): Promise<boolean>;
 
@@ -75,7 +75,7 @@ export function getTypes(): Permissions[];
 export interface MultiResult {
     [k: Permissions | string]: Status;
 }
-export type Result<T> = T extends any[] ? MultipleResult : Status;
+export type Result<T> = T extends any[] ? MultiResult : Status;
 
 export type RequestOptions<T extends Permissions = Permissions> = T extends keyof ObjectPermissions ? ObjectPermissions[T] : any;
 export function request<T extends Permissions>(permission: T, options?: RequestOptions<T>): Promise<Status>;

@@ -803,7 +803,7 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
             const res = await request(perm, permission[perm]);
             grantedPermissions[perm] = res;
         }
-        return grantedPermissions;
+        return grantedPermissions as Result<T>;
     }
     if (permissionTypes.indexOf(permission) === -1) {
         if (Trace.isEnabled()) {
@@ -817,7 +817,7 @@ export async function request<T extends IOSPermissionTypes | Record<IOSPermissio
         throw new Error('@nativescript-community/perms: You cannot request backgroundRefresh');
     }
 
-    return PermissionsIOS.requestPermission(permission, options || DEFAULTS[permission as IOSPermissionTypes]);
+    return PermissionsIOS.requestPermission(permission, options || DEFAULTS[permission as IOSPermissionTypes]) as Promise<Result<T>>;
 }
 
 export function checkMultiple<T extends Partial<ObjectIOSPermissionsRest>>(permissions: T): Promise<MultiResult> {
