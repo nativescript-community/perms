@@ -6,7 +6,7 @@
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
-        "clean": "rimraf -g 'packages/**/*.d.ts' 'packages/**/*.tsbuildinfo' 'packages/**/*.js' 'packages/**/*.mjs' 'packages/**/*.js.map' 'packages/**/*.mjs.map' 'packages/**/*.metada' 'packages/**/angular/ng-package.json'",
+        "clean": "rimraf -g 'packages/**/*.d.ts' 'packages/**/*.tsbuildinfo' 'packages/*/*.js' 'packages/*/!(platforms)/**/*.js' 'packages/**/*.mjs' 'packages/**/*.js.map' 'packages/**/*.mjs.map' 'packages/**/*.metada' 'packages/**/angular/ng-package.json'",
         "plugin.watch.tsc": "npm run tsc -- -w",
         "plugin.watch.android": "npm i && npm-watch build.android",
         "plugin.watch.ios": "npm i && npm-watch build.ios",
@@ -27,7 +27,7 @@
         "start": "./node_modules/.bin/ntl -A -s 15 -o",
         "submodules": "git submodule update --init",
         "update": "node ./tools/update.js",
-        "commit_readme_doc_changes": "git add docs/** *.md ; git commit -m \"readme/doc\" ; echo \"commit readme doc done\""
+        "commit_readme_doc_changes": "git add docs *.md ; git commit -m \"readme/doc\" ; echo \"commit readme doc done\""
     },
     "devDependencies": {
         "@nativescript-community/plugin-seed-tools": "portal:tools",
